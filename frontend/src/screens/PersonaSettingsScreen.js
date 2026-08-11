@@ -127,7 +127,7 @@ export default function PersonaSettingsScreen({ persona, onBack, onDeleted, onSa
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1 }}>
         <ScrollView contentContainerStyle={{ paddingTop: theme.space(4), paddingBottom: theme.space(20) }} keyboardShouldPersistTaps="handled">
           <H1>{persona.name}</H1>
-          <Pill color={isLegacy ? c.legacy : c.companion}>{isLegacy ? '🕊  Legacy · offline' : '💬  Companion · online'}</Pill>
+          <Pill color={isLegacy ? c.legacy : c.companion}>{isLegacy ? '🕊  Legacy · private, from memory' : '💬  Companion · knows current events'}</Pill>
 
           {/* Details */}
           <H2 style={{ marginTop: theme.space(6), marginBottom: theme.space(3) }}>Details</H2>

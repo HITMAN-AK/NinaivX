@@ -159,6 +159,8 @@ export const api = {
       type: file.type || 'audio/mpeg',
     });
     if (persona_id) form.append('persona_id', persona_id);
+    // Consent is gated in the UI; confirm it to the server too (enforced server-side).
+    form.append('rights_confirmed', 'true');
 
     let res;
     try {

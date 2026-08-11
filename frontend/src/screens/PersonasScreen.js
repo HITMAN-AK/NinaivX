@@ -57,7 +57,7 @@ export default function PersonasScreen({ onOpen, onCreate }) {
             <H2>{item.name}</H2>
             <Caption style={{ marginTop: 2 }}>{item.relationship_with_user}</Caption>
             <View style={{ marginTop: theme.space(2) }}>
-              <Pill color={accent}>{isLegacy ? '🕊  Legacy · offline' : '💬  Companion · online'}</Pill>
+              <Pill color={accent}>{isLegacy ? '🕊  Legacy · private, from memory' : '💬  Companion · knows current events'}</Pill>
             </View>
           </View>
         </TouchableOpacity>

@@ -76,7 +76,7 @@ export default function ChatScreen({ persona, onBack, onSettings }) {
         </LinearGradient>
         <View style={{ flex: 1, marginLeft: theme.space(3) }}>
           <Text style={styles.headName}>{persona.name}</Text>
-          <Text style={[styles.headStatus, { color: accent }]}>{isLegacy ? '🕊  Legacy · offline & safe' : '💬  Companion · online'}</Text>
+          <Text style={[styles.headStatus, { color: accent }]}>{isLegacy ? '🕊  Legacy · private, from memory' : '💬  Companion · knows current events'}</Text>
         </View>
         <TouchableOpacity onPress={onSettings} style={styles.gear}><Text style={styles.gearIcon}>⚙︎</Text></TouchableOpacity>
       </View>

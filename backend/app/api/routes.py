@@ -580,6 +580,7 @@ async def clone_voice(
     description: str = Form(...),
     file: UploadFile = File(...),
     persona_id: str | None = Form(None),
+    rights_confirmed: bool = Form(False),
     user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
@@ -587,7 +588,17 @@ async def clone_voice(
     Clone a voice from an audio sample. If a persona_id is given, the new
     ElevenLabs voice_id is saved onto that persona, so all future voice replies
     use this cloned voice (e.g. Grandpa Arthur's real voice).
+
+    Consent gate: the caller MUST confirm (rights_confirmed=true) that the recording
+    is the intended person's voice and that they have the right to use it. This is
+    enforced server-side so it cannot be bypassed by calling the API directly.
     """
+    if not rights_confirmed:
+        raise HTTPException(
+            status_code=400,
+            detail="You must confirm you have the right to use this recording before cloning a voice.",
+        )
+
     voice_id = await voice_service.clone_voice(name, description, [file])
 
     saved_to = None

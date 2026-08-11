@@ -7,7 +7,7 @@ import * as DocumentPicker from 'expo-document-picker';
 import { theme } from '../theme';
 import { useAuth } from '../AuthContext';
 import { api } from '../api';
-import { LANGUAGES, codeForLanguage } from '../constants';
+import { codeForLanguage } from '../constants';
 import VoiceInputButton from '../VoiceInputButton';
 import SyntheticVoiceButtons from '../SyntheticVoiceButtons';
 import VoicePicker from '../VoicePicker';
@@ -113,12 +113,12 @@ export default function CreatePersonaScreen({ onDone, onCancel }) {
           <View style={styles.typeRow}>
             <TypeCard
               active={!isLegacy} title="Companion" emoji="💬"
-              subtitle="A living friend — can use the internet"
+              subtitle="A living friend who can look things up online"
               colors={c.gradTeal} onPress={() => setType('companion')}
             />
             <TypeCard
               active={isLegacy} title="Legacy" emoji="🕊️"
-              subtitle="A loved one — kept fully offline"
+              subtitle="A loved one — private and true to memory"
               colors={c.gradViolet} onPress={() => setType('deceased')}
             />
           </View>
@@ -136,15 +136,6 @@ export default function CreatePersonaScreen({ onDone, onCancel }) {
 
             <Field label="Language they speak" value={language} onChangeText={setLanguage}
               placeholder="Type any language — e.g. Tamil, Telugu, Japanese" autoCapitalize="words" />
-            <Text style={styles.quickLabel}>Quick pick</Text>
-            <View style={styles.langRow}>
-              {LANGUAGES.map((l) => (
-                <TouchableOpacity key={l.code} onPress={() => setLanguage(l.name)}
-                  style={[styles.langChip, language === l.name && styles.langChipActive]}>
-                  <Text style={[styles.langChipText, language === l.name && { color: isLegacy ? c.legacy : c.companion }]}>{l.name}</Text>
-                </TouchableOpacity>
-              ))}
-            </View>
 
             <Field label="Personality & memories" value={personality} onChangeText={setPersonality}
               placeholder={`Speak or type in ${language}…`}
@@ -193,16 +184,14 @@ export default function CreatePersonaScreen({ onDone, onCancel }) {
               {voiceAsset ? 'It will be cloned when you create the persona (overrides the picked voice above).'
                 : 'Upload a clear 1–2 min clip of the real person, or pick a ready-made voice above.'}
             </Caption>
-            {voiceAsset && (
-              <Checkbox
-                checked={voiceRightsOk}
-                onToggle={() => setVoiceRightsOk(!voiceRightsOk)}
-                accent={isLegacy ? c.legacy : c.companion}
-              >
-                I confirm this recording is the voice of the intended person, and that I have the
-                right to use it to create a cloned voice.
-              </Checkbox>
-            )}
+            <Checkbox
+              checked={voiceRightsOk}
+              onToggle={() => setVoiceRightsOk(!voiceRightsOk)}
+              accent={isLegacy ? c.legacy : c.companion}
+            >
+              I confirm this recording is the voice of the intended person, and that I have the
+              right to use it to create a cloned voice.
+            </Checkbox>
             <SyntheticVoiceButtons />
           </View>
 

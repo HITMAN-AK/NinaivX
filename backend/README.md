@@ -246,7 +246,7 @@ Authorization: Bearer <supabase_access_token>
 | POST | `/api/stt` | form: audio `file`, optional `language_code` | Transcribe audio → `{ transcript }` (for review before sending in Voice mode) |
 | POST | `/api/chat-voice` | `persona_id, user_message` | Text in → `{ reply, audio_base64 }` (spoken reply for a reviewed transcript) |
 | POST | `/api/voice-chat` | form: `persona_id` + audio `file` | **Full voice loop**: audio in → `{ transcript, reply, audio_base64 }` |
-| POST | `/api/clone-voice` | form: `name, description, file`, optional `persona_id` | Clone a voice from an uploaded recording; if `persona_id` given, save it to that persona |
+| POST | `/api/clone-voice` | form: `name, description, file`, **required** `rights_confirmed=true`, optional `persona_id` | Clone a voice from an uploaded recording; if `persona_id` given, save it to that persona. **Consent gate:** the caller must confirm they have the right to use the recording (`rights_confirmed=true`) or it's rejected with `400` — enforced server-side, so it can't be bypassed via the API. |
 | GET | `/api/voices` | query: `gender`, `age`, `language`, `use_case`, `limit` | Search the ElevenLabs **Voice Library** (`/v1/shared-voices`, many languages), filtered by preference. `use_case` defaults to `conversational`; `limit` defaults to 5. Each result includes a `preview_url`. |
 | GET | `/api/synthetic-voice` | query: `gender` (male/female) | Free AI-generated voice sample (MP3) — upload it to demo cloning with **no real-person data** |
 | GET | `/api/disclosure` | — | **Public.** AI-transparency notice for the app to show at onboarding + as an in-app indicator |
