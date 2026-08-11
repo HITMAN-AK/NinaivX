@@ -118,7 +118,7 @@ export default function CreatePersonaScreen({ onDone, onCancel }) {
           </View>
 
           <View style={{ marginTop: theme.space(6) }}>
-            <Field label="Name" value={name} onChangeText={setName} placeholder={isLegacy ? 'e.g. Arthur' : 'e.g. Maya'} autoCapitalize="words" />
+            <Field label="Name" value={name} onChangeText={setName} placeholder={isLegacy ? 'e.g. Brook' : 'e.g. Luffy'} autoCapitalize="words" />
             <View style={{ flexDirection: 'row', gap: theme.space(3) }}>
               <View style={{ flex: 1 }}><Field label={isLegacy ? 'Age' : 'Age (18+)'} value={age} onChangeText={setAge} placeholder={isLegacy ? 'any age' : '18+'} keyboardType="number-pad" /></View>
               <View style={{ flex: 1.3 }}><Field label="Gender" value={gender} onChangeText={setGender} placeholder="Male / Female" autoCapitalize="words" /></View>
@@ -126,7 +126,7 @@ export default function CreatePersonaScreen({ onDone, onCancel }) {
             <Field label="Relationship to you" value={relationship} onChangeText={setRelationship}
               placeholder={isLegacy ? 'e.g. Grandfather' : 'e.g. Best friend'} autoCapitalize="words" />
             <Field label="What should they call you?" value={nickname} onChangeText={setNickname}
-              placeholder="e.g. Ashwin, kanna, my boy (leave blank to use your name)" autoCapitalize="words" />
+              placeholder="e.g. dear, buddy, sweetheart (leave blank to use your name)" autoCapitalize="words" />
 
             <Field label="Language they speak" value={language} onChangeText={setLanguage}
               placeholder="Type any language — e.g. Tamil, Telugu, Japanese" autoCapitalize="words" />

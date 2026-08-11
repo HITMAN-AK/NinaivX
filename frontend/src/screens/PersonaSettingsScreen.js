@@ -130,7 +130,7 @@ export default function PersonaSettingsScreen({ persona, onBack, onDeleted, onSa
           </View>
           <Field label="Relationship to you" value={relationship} onChangeText={setRelationship} autoCapitalize="words" />
           <Field label="What should they call you?" value={nickname} onChangeText={setNickname}
-            placeholder="e.g. Ashwin, kanna, my boy (blank = your name)" autoCapitalize="words" />
+            placeholder="e.g. dear, buddy, sweetheart (blank = your name)" autoCapitalize="words" />
 
           <Field label="Language they speak" value={language} onChangeText={setLanguage}
             placeholder="Type any language — e.g. Tamil, Telugu, Japanese" autoCapitalize="words" />

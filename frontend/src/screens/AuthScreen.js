@@ -65,7 +65,7 @@ export default function AuthScreen() {
             </View>
 
             {isSignup && (
-              <Field label="Your name" value={name} onChangeText={setName} placeholder="e.g. Ashwin" autoCapitalize="words" />
+              <Field label="Your name" value={name} onChangeText={setName} placeholder="e.g. Alex" autoCapitalize="words" />
             )}
             <Field label="Email" value={email} onChangeText={setEmail} placeholder="you@example.com"
               keyboardType="email-address" autoCapitalize="none" autoCorrect={false} />
