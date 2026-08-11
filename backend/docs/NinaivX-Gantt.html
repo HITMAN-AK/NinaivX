@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>NinaivX — Dissertation Gantt Chart</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:"Segoe UI", Arial, sans-serif; color:#1f2937; background:#fff; padding:26px 30px; width:1140px;
+         -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  h1 { font-size:28px; color:#4338ca; text-align:center; }
+  .sub { text-align:center; font-size:14px; color:#6b7280; margin:4px 0 18px; }
+
+  .canvas { position:relative; width:1080px; margin:0 auto; height:440px; }
+
+  .gl { position:absolute; top:60px; width:1px; height:340px; background:#eceef2; }
+  .mlabel { position:absolute; top:34px; width:100px; text-align:center; font-size:13px; font-weight:600; color:#374151; }
+
+  .row-label { position:absolute; left:0; width:270px; font-size:12.5px; color:#374151; height:34px; line-height:34px;
+               white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .row-bg { position:absolute; left:280px; width:800px; height:34px; }
+
+  .bar { position:absolute; height:20px; border-radius:6px; font-size:10.5px; color:#fff; line-height:20px;
+         padding:0 6px; white-space:nowrap; overflow:hidden; }
+  .done     { background:#10b981; }
+  .progress { background:#3b82f6; }
+  .upcoming { background:#a78bfa; }
+
+  .ms { position:absolute; width:16px; height:16px; background:#f59e0b; transform:rotate(45deg); border:2px solid #fff; }
+  .ms.red { background:#ef4444; }
+
+  .deadline { position:absolute; top:55px; height:350px; width:2px; background:#7c3aed; border-left:2px dashed #7c3aed; }
+  .deadline .lab { position:absolute; top:-44px; left:-46px; font-size:11px; font-weight:700; color:#7c3aed; white-space:nowrap; }
+
+  .legend { display:flex; gap:18px; justify-content:center; margin-top:14px; font-size:12px; color:#374151; flex-wrap:wrap; }
+  .legend .it { display:flex; align-items:center; gap:6px; }
+  .sw { width:16px; height:12px; border-radius:3px; }
+  .dia { width:11px; height:11px; transform:rotate(45deg); }
+
+  .footer { text-align:center; font-size:11px; color:#9ca3af; margin-top:12px; }
+</style>
+</head>
+<body>
+  <h1>NinaivX — MSc Dissertation Project Plan (Gantt Chart)</h1>
+  <div class="sub">Ashwin Kumar Ramesh Kumar · University of Sheffield · Feb 2026 → Submission early Sept 2026</div>
+
+  <div class="canvas">
+    <!-- Month gridlines -->
+    <div class="gl" style="left:280px"></div>
+    <div class="gl" style="left:380px"></div>
+    <div class="gl" style="left:480px"></div>
+    <div class="gl" style="left:580px"></div>
+    <div class="gl" style="left:680px"></div>
+    <div class="gl" style="left:780px"></div>
+    <div class="gl" style="left:880px"></div>
+    <div class="gl" style="left:980px"></div>
+    <div class="gl" style="left:1080px"></div>
+
+    <!-- Month labels -->
+    <div class="mlabel" style="left:280px">Feb</div>
+    <div class="mlabel" style="left:380px">Mar</div>
+    <div class="mlabel" style="left:480px">Apr</div>
+    <div class="mlabel" style="left:580px">May</div>
+    <div class="mlabel" style="left:680px">Jun</div>
+    <div class="mlabel" style="left:780px">Jul</div>
+    <div class="mlabel" style="left:880px">Aug</div>
+    <div class="mlabel" style="left:980px">Sep</div>
+
+    <!-- Row backgrounds (10 rows, start y=60, h=34, alternating) -->
+    <div class="row-bg" style="top:60px;  background:#fafafa"></div>
+    <div class="row-bg" style="top:94px"></div>
+    <div class="row-bg" style="top:128px; background:#fafafa"></div>
+    <div class="row-bg" style="top:162px"></div>
+    <div class="row-bg" style="top:196px; background:#fafafa"></div>
+    <div class="row-bg" style="top:230px"></div>
+    <div class="row-bg" style="top:264px; background:#fafafa"></div>
+    <div class="row-bg" style="top:298px"></div>
+    <div class="row-bg" style="top:332px; background:#fafafa"></div>
+    <div class="row-bg" style="top:366px"></div>
+
+    <!-- Row labels -->
+    <div class="row-label" style="top:60px">1. Project Proposal &amp; Planning</div>
+    <div class="row-label" style="top:94px">2. Requirements &amp; Architecture Design</div>
+    <div class="row-label" style="top:128px">3. Backend Implementation</div>
+    <div class="row-label" style="top:162px">4. Literature Survey / Background</div>
+    <div class="row-label" style="top:196px">5. Frontend App (React Native)</div>
+    <div class="row-label" style="top:230px">6. Frontend ↔ Backend Integration</div>
+    <div class="row-label" style="top:264px">7. Deployment &amp; System Testing</div>
+    <div class="row-label" style="top:298px">8. Dissertation Write-up (all chapters)</div>
+    <div class="row-label" style="top:332px">9. Supervisor Review &amp; Revisions</div>
+    <div class="row-label" style="top:366px">10. ◆ Final Dissertation Submission</div>
+
+    <!-- Bars: left=280+startMonth*100, width=duration*100, top=rowTop+7 -->
+    <div class="bar done"     style="top:67px;  left:280px; width:100px">Done ✓</div>
+    <div class="bar done"     style="top:101px; left:330px; width:150px">Done ✓</div>
+    <div class="bar done"     style="top:135px; left:380px; width:450px">Done ✓ (agent · voice · multilingual · cloning)</div>
+    <div class="bar done"     style="top:169px; left:680px; width:150px">Done ✓</div>
+    <div class="bar done"     style="top:203px; left:780px; width:90px">Done ✓ (app)</div>
+    <div class="bar done"     style="top:237px; left:810px; width:60px">Done ✓</div>
+
+    <div class="bar upcoming" style="top:271px; left:870px; width:70px">Testing</div>
+    <div class="ms"           style="top:273px; left:932px"></div>
+    <div class="bar upcoming" style="top:305px; left:900px; width:90px">Write-up</div>
+    <div class="ms"           style="top:307px; left:982px"></div>
+    <div class="bar upcoming" style="top:339px; left:970px; width:25px">Rev</div>
+    <div class="ms red"       style="top:375px; left:992px"></div>
+
+    <!-- Submission line (~early Sep) -->
+    <div class="deadline" style="left:1000px"><span class="lab">Submission</span></div>
+  </div>
+
+  <div class="legend">
+    <div class="it"><span class="sw done"></span> Completed</div>
+    <div class="it"><span class="sw upcoming"></span> Upcoming</div>
+    <div class="it"><span class="dia" style="background:#f59e0b"></span> Milestone (Testing, Write-up)</div>
+    <div class="it"><span class="dia" style="background:#ef4444"></span> Final submission</div>
+  </div>
+
+  <div class="footer">
+    Backend, literature survey and the React Native app are complete. System testing uses synthetic personas (no
+    human participants, so no ethical approval required). Flow: Background → Design → Implementation → Integration
+    → Testing → Write-up → Submission.
+  </div>
+</body>
+</html>

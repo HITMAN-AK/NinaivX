@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>NinaivX — How It Works</title>
+<style>
+  @page { size: A4 portrait; margin: 14mm 14mm; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: "Segoe UI", Arial, sans-serif; color: #1f2937; font-size: 10.5pt; line-height: 1.5;
+         -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+
+  .header { text-align: center; margin-bottom: 14px; }
+  .header h1 { font-size: 30px; color: #4338ca; letter-spacing: 1px; }
+  .header .tag { font-size: 13px; color: #6b7280; margin-top: 4px; }
+  .header .sub { font-size: 12px; color: #374151; margin-top: 8px; font-style: italic; }
+
+  .section-title { font-size: 15px; font-weight: 700; color: #4338ca; margin: 18px 0 9px;
+                   padding-bottom: 3px; border-bottom: 2px solid #e0e7ff; }
+  p { margin-bottom: 8px; }
+
+  /* what it is */
+  .whatis { background:#f8f8fb; border:1px solid #e3e3ea; border-radius:10px; padding:12px 16px; font-size:11pt; }
+
+  /* Two modes */
+  .modes { display: flex; gap: 16px; }
+  .mode { flex: 1; border-radius: 12px; padding: 14px 16px; color: #fff;
+          -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .mode.legacy { background: #4c33c4; }
+  .mode.companion { background: #0b7d8a; }
+  .mode h3 { font-size: 17px; margin-bottom: 6px; color:#fff; }
+  .mode p { font-size: 12px; line-height: 1.45; margin-bottom: 8px; color:#ffffff; }
+  .mode .pill { display:inline-block; background: rgba(255,255,255,.28); padding: 4px 10px;
+                border-radius: 20px; font-size: 11px; font-weight:700; color:#ffffff; }
+
+  /* setup steps */
+  .steps { display:flex; flex-direction:column; gap:7px; }
+  .step { display:flex; align-items:flex-start; gap:11px; background:#f9fafb; border:1px solid #e5e7eb;
+          border-radius:9px; padding:9px 12px; }
+  .step .n { flex:0 0 26px; height:26px; background:#4338ca; color:#fff; border-radius:50%;
+             font-weight:700; font-size:12px; display:flex; align-items:center; justify-content:center; }
+  .step .txt { font-size:11pt; }
+  .step .txt b { color:#111827; }
+  .step .txt span { color:#6b7280; font-size:10pt; }
+
+  /* conversation flow */
+  .flow { display:flex; align-items:stretch; gap:0; margin-top:4px; }
+  .fstep { flex:1; text-align:center; background:#f9fafb; border:2px solid #e5e7eb; border-radius:10px; padding:10px 6px; }
+  .fstep .ico { font-size:24px; }
+  .fstep h4 { font-size:12px; margin:4px 0 3px; color:#111827; }
+  .fstep p { font-size:10px; color:#4b5563; line-height:1.3; margin:0; }
+  .arrow { display:flex; align-items:center; font-size:20px; color:#a5b4fc; padding:0 3px; }
+
+  .brain-note { margin-top:12px; background:#fffbeb; border:2px solid #fde68a; border-radius:10px;
+                padding:11px 15px; font-size:11pt; color:#92400e; line-height:1.5; }
+  .brain-note b { color:#78350f; }
+
+  .promise { margin-top:12px; display:flex; gap:12px; }
+  .promise .card { flex:1; background:#f0fdf4; border:1px solid #bbf7d0; border-radius:9px; padding:9px 12px; font-size:10pt; }
+  .promise .card b { color:#166534; display:block; margin-bottom:2px; }
+
+  .footer { margin-top:16px; text-align:center; font-size:10px; color:#9ca3af; }
+  .done { color:#059669; font-weight:700; }
+</style>
+</head>
+<body>
+
+  <div class="header">
+    <h1>NinaivX</h1>
+    <div class="tag">A voice app to talk with the people who matter — even those we've lost.</div>
+    <div class="sub">You speak, and an AI answers back in a real human voice — like a phone call.</div>
+  </div>
+
+  <div class="whatis">
+    <b>In one sentence:</b> NinaivX lets a person hold a natural, spoken conversation with an AI —
+    either a caring <b>companion</b> for someone who feels lonely, or a comforting recreation of a
+    <b>loved one who has passed away</b>, speaking in a voice you choose or even their own cloned voice.
+  </div>
+
+  <div class="section-title">Who it is for — two kinds of conversation</div>
+  <div class="modes">
+    <div class="mode legacy">
+      <h3>🕊️ The Loved One (Legacy)</h3>
+      <p>For someone grieving. They can talk to an AI version of a person who has passed away — to feel
+         close again, say the things left unsaid, and find comfort and closure.</p>
+      <span class="pill">🔒 Kept offline so it can never invent false things about the person</span>
+    </div>
+    <div class="mode companion">
+      <h3>💬 The Companion</h3>
+      <p>For someone lonely. A warm, supportive friend available any time, that listens and talks
+         naturally — and can even chat about today's news or weather.</p>
+      <span class="pill">🌐 Connected to the internet for up-to-date conversation</span>
+    </div>
+  </div>
+
+  <div class="section-title">Getting started (done once)</div>
+  <div class="steps">
+    <div class="step"><div class="n">1</div><div class="txt"><b>Create an account and sign in.</b>
+      <span>&nbsp;Simple email and password — this keeps every person's data private and separate.</span></div></div>
+    <div class="step"><div class="n">2</div><div class="txt"><b>Describe the person.</b>
+      <span>&nbsp;Their name, personality, and how they spoke — this is what makes the AI feel like them.</span></div></div>
+    <div class="step"><div class="n">3</div><div class="txt"><b>Choose a voice.</b>
+      <span>&nbsp;Say the kind of voice you want (for example a man or woman, younger or older) and pick from the options — or upload a short clip to <b>clone their real voice</b>.</span></div></div>
+  </div>
+
+  <div class="section-title">How one conversation works</div>
+  <div class="flow">
+    <div class="fstep"><div class="ico">🎤</div><h4>1. You speak</h4><p>Talk into the app, like a phone call.</p></div>
+    <div class="arrow">➜</div>
+    <div class="fstep"><div class="ico">👂</div><h4>2. It listens</h4><p>Your speech is turned into words.</p></div>
+    <div class="arrow">➜</div>
+    <div class="fstep"><div class="ico">🧠</div><h4>3. It thinks</h4><p>The AI forms a reply, in character.</p></div>
+    <div class="arrow">➜</div>
+    <div class="fstep"><div class="ico">🔊</div><h4>4. It replies</h4><p>You hear it in the chosen voice.</p></div>
+    <div class="arrow">➜</div>
+    <div class="fstep"><div class="ico">💾</div><h4>5. It remembers</h4><p>The chat is saved for next time.</p></div>
+  </div>
+
+  <div class="brain-note">
+    <b>The clever part — the &ldquo;brain&rdquo; makes a safety decision.</b> Before replying, the app checks who
+    you are talking to. If it is a <b>loved one</b>, it stays completely offline, so it can never make up false
+    &ldquo;facts&rdquo; about a real person who has died. If it is a <b>companion</b>, it is allowed to look things
+    up online. This safety choice is the heart of the project.
+  </div>
+
+  <div class="section-title">Our promises to the user</div>
+  <div class="promise">
+    <div class="card"><b>🔒 Private</b>Your conversations and the person's details are protected, and each user only ever sees their own.</div>
+    <div class="card"><b>🙂 Honest</b>The app always makes clear it is an AI — it will never pretend to truly be the real person.</div>
+    <div class="card"><b>🕊️ Gentle</b>Built to support healthy grieving and comfort — not to replace the person or trap you.</div>
+  </div>
+
+  <div class="footer">
+    Progress: the <span class="done">backend (the engine and brain) is built and tested ✓</span> &nbsp;·&nbsp;
+    Next: the app screens people tap on, and putting it online. &nbsp;·&nbsp;
+    Ashwin Kumar Ramesh Kumar — MSc AI, University of Sheffield
+  </div>
+
+</body>
+</html>

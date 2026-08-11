@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>NinaivX — Literature Survey Summary Table</title>
+<style>
+  @page { size: A4 landscape; margin: 12mm 12mm; }
+  * { box-sizing: border-box; }
+  body { font-family:"Segoe UI",Arial,sans-serif; color:#1f2937; font-size:9pt; line-height:1.35;
+         -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  h1 { font-size:16pt; color:#4338ca; text-align:center; margin-bottom:2px; }
+  .meta { text-align:center; font-size:9pt; color:#6b7280; margin-bottom:8px; }
+  p.intro { font-size:8.8pt; margin:0 0 8px; }
+  table { border-collapse:collapse; width:100%; }
+  th,td { border:1px solid #cbd5e1; padding:4px 7px; vertical-align:top; text-align:left; }
+  th { background:#eef2ff; font-size:8.6pt; }
+  td.ref { width:34px; font-weight:700; color:#4338ca; text-align:center; }
+  td.work { width:150px; font-weight:600; }
+  td.why { color:#14532d; width:290px; }
+  tr.group td { background:#4338ca; color:#fff; font-weight:700; font-size:9.3pt; letter-spacing:.3px; }
+  tr.group.b td { background:#0d9488; }
+  tr.group.c td { background:#9a6b00; }
+  tr.group.d td { background:#7f1d1d; }
+  tr.group.e td { background:#166534; }
+  tr.group.f td { background:#6d28d9; }
+  .src { font-size:8pt; color:#666; margin-top:6px; }
+</style>
+</head>
+<body>
+
+<h1>NinaivX — Literature Survey, in Plain English</h1>
+<div class="meta">A simple summary of all 29 works — what each is and why it matters to my project · Ashwin Kumar Ramesh Kumar · MSc AI, University of Sheffield</div>
+<p class="intro">
+  This one-look table explains, in everyday language, each source cited in the Literature Survey: what it is,
+  and why it matters to NinaivX. Reference numbers [n] match the survey and its reference list.
+</p>
+
+<table>
+  <tr><th>Ref</th><th>Work (author, year)</th><th>What it is — in simple words</th><th>Why it matters to NinaivX</th></tr>
+
+  <tr class="group"><td colspan="4">A · Foundations of conversational AI</td></tr>
+  <tr><td class="ref">1</td><td class="work">ELIZA (Weizenbaum, 1966)</td><td>The first-ever chatbot — faked a therapist using simple word-matching rules, with no real understanding.</td><td class="why">Shows people bond with machines that don't truly understand them (the "ELIZA effect") — a real risk in a grief app.</td></tr>
+  <tr><td class="ref">2</td><td class="work">Transformer (Vaswani et al., 2017)</td><td>The AI design ("attention") that powers all modern language models.</td><td class="why">The foundation that makes today's realistic conversational AI possible.</td></tr>
+  <tr><td class="ref">3</td><td class="work">GPT-3 (Brown et al., 2020)</td><td>A very large model that writes fluent, human-like text from just a few examples.</td><td class="why">Powerful, but can confidently make things up — dangerous when imitating a real person.</td></tr>
+  <tr><td class="ref">4</td><td class="work">BERT (Devlin et al., 2019)</td><td>An AI good at understanding text (not generating it).</td><td class="why">Useful for understanding tasks, but can't produce the spoken replies my app needs.</td></tr>
+
+  <tr class="group b"><td colspan="4">B · Voice technology (speech in &amp; out)</td></tr>
+  <tr><td class="ref">5</td><td class="work">Tacotron 2 (Shen et al., 2018)</td><td>Turns text into near-human-sounding speech.</td><td class="why">A milestone in realistic text-to-speech — but only one fixed voice, no cloning.</td></tr>
+  <tr><td class="ref">6</td><td class="work">Whisper (Radford et al., 2023)</td><td>Converts speech into text across many accents and noisy conditions.</td><td class="why">The kind of speech-to-text that lets users simply talk to the app.</td></tr>
+  <tr><td class="ref">7</td><td class="work">VALL-E (Wang et al., 2023)</td><td>Clones a person's voice from as little as 3 seconds of audio.</td><td class="why">Proves voice cloning is possible — and raises serious consent concerns.</td></tr>
+  <tr><td class="ref">8</td><td class="work">ElevenLabs (company, 2022)</td><td>A commercial service for AI voice generation and cloning.</td><td class="why">The voice engine my app actually uses for speech and cloning.</td></tr>
+
+  <tr class="group c"><td colspan="4">C · AI companions &amp; the loneliness problem</td></tr>
+  <tr><td class="ref">9</td><td class="work">WHO report (2025)</td><td>Says about 1 in 6 people worldwide are lonely, linked to ~871,000 deaths a year.</td><td class="why">Proves the loneliness problem my companion mode addresses is real and huge.</td></tr>
+  <tr><td class="ref">10</td><td class="work">Cigna Loneliness Index (2018)</td><td>Found ~46% of Americans sometimes or always feel alone.</td><td class="why">More evidence that loneliness is widespread.</td></tr>
+  <tr><td class="ref">11</td><td class="work">XiaoIce (Zhou et al., 2020)</td><td>A hugely popular empathetic chatbot, engineered to keep people chatting for a long time.</td><td class="why">Shows companions work — but an engagement-first design can be unhealthy.</td></tr>
+  <tr><td class="ref">12</td><td class="work">Ta et al. (2020)</td><td>Study: people report real companionship and support from the app Replika.</td><td class="why">Evidence that AI companions can genuinely reduce loneliness.</td></tr>
+  <tr><td class="ref">13</td><td class="work">Skjuve et al. (2021)</td><td>Interviews showing people form real relationships with chatbots.</td><td class="why">Emotional bonds do form — though from a small, self-selected study.</td></tr>
+  <tr><td class="ref">14</td><td class="work">Replika (company, 2017)</td><td>A popular AI companion app — which actually began from a chatbot built from a dead friend's texts.</td><td class="why">A direct competitor, and an early link between companionship and grief.</td></tr>
+  <tr><td class="ref">15</td><td class="work">Laestadius et al. (2024)</td><td>Study finding people become emotionally dependent on Replika, sometimes with harm.</td><td class="why">Warns companion apps can create dependency — my design deliberately avoids this.</td></tr>
+
+  <tr class="group d"><td colspan="4">D · Digital afterlife &amp; griefbots (recreating a person)</td></tr>
+  <tr><td class="ref">16</td><td class="work">HereAfter AI (company, ~2019)</td><td>Records a living person's stories, then replays them later in their own voice.</td><td class="why">Competitor: safe but only replays recordings — it can't hold a real conversation.</td></tr>
+  <tr><td class="ref">17</td><td class="work">Project December (Fagone, 2021)</td><td>News story of a man who recreated his late fiancée as a GPT-3 chatbot.</td><td class="why">Famous case showing both the deep need and the danger (it can fabricate memories).</td></tr>
+  <tr><td class="ref">18</td><td class="work">Microsoft patent (2020)</td><td>A patent for building a chatbot of a specific person — explicitly including the deceased.</td><td class="why">Shows big firms see value here — but it's just a patent, unbuilt, with consent unresolved.</td></tr>
+  <tr><td class="ref">26</td><td class="work">You, Only Virtual (company)</td><td>A commercial app to phone an AI version of a dead loved one; its founder wants to "solve" grief.</td><td class="why">My closest competitor — I take the opposite stance: support healthy grieving, not eliminate it.</td></tr>
+  <tr><td class="ref">27</td><td class="work">BBC "AI Confidential" (2026)</td><td>Documentary featuring YOV; Hannah Fry hears her own cloned voice, is moved to tears, yet calls it "a lie."</td><td class="why">Real-world evidence of the emotional power — and the ethical debate my project engages.</td></tr>
+
+  <tr class="group e"><td colspan="4">E · Making it safe (stopping made-up answers)</td></tr>
+  <tr><td class="ref">19</td><td class="work">Hallucination survey (Ji et al., 2023)</td><td>A survey of AI "hallucination" — when a model makes up false information.</td><td class="why">Names the core safety risk that my air-gapped design is built to reduce.</td></tr>
+  <tr><td class="ref">20</td><td class="work">RAG (Lewis et al., 2020)</td><td>A method that grounds answers in real documents to reduce made-up facts.</td><td class="why">The technique behind "grounding" the deceased persona in stored data.</td></tr>
+  <tr><td class="ref">21</td><td class="work">RAG survey (Gao et al., 2023)</td><td>A survey organising the many ways to do retrieval-grounded generation.</td><td class="why">Overview of deeper grounding methods — a clear avenue for my future work.</td></tr>
+  <tr><td class="ref">22</td><td class="work">Llama Guard (Inan et al., 2023)</td><td>A safety filter that screens what goes into and out of an AI.</td><td class="why">A guardrail approach — but generic, not tailored to grief.</td></tr>
+  <tr><td class="ref">28</td><td class="work">LM harms taxonomy (Weidinger et al., 2021)</td><td>A structured map of the many harms language models can cause.</td><td class="why">Frames hallucination as one of several harms a persona-imitating system must handle.</td></tr>
+
+  <tr class="group f"><td colspan="4">F · Ethics of recreating the dead</td></tr>
+  <tr><td class="ref">23</td><td class="work">Öhman &amp; Floridi (2017)</td><td>Critique of the "digital afterlife industry" that monetises data of the dead.</td><td class="why">Ethical foundation for how a dead person's data should be handled.</td></tr>
+  <tr><td class="ref">24</td><td class="work">Öhman &amp; Floridi (2018)</td><td>Argues that digital remains deserve dignity and protection.</td><td class="why">Supports my privacy-first, respectful design.</td></tr>
+  <tr><td class="ref">25</td><td class="work">Hollanek &amp; Nowaczyk-Basińska (2024)</td><td>Proposes safeguards for griefbots: transparency, consent, and dignified "retirement".</td><td class="why">The most relevant ethics guidance — my AI-disclosure and consent choices follow it.</td></tr>
+  <tr><td class="ref">29</td><td class="work">Ethics of "deathbots" (Lindemann, 2022)</td><td>Argues recreating a person creates duties both to the dead and to the grieving.</td><td class="why">Reinforces the ethical duties my design is built to respect.</td></tr>
+</table>
+
+<p class="src">Reference numbers match the Literature Survey and its reference list (all 29 verified against primary sources, June–July 2026).</p>
+
+</body>
+</html>

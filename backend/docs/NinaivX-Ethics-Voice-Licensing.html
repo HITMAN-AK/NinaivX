@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>NinaivX — Ethics & Voice Licensing</title>
+<style>
+  @page { size: A4 portrait; margin: 20mm 18mm; }
+  * { box-sizing: border-box; }
+  body { font-family: "Georgia","Times New Roman",serif; color:#111; font-size:11pt; line-height:1.55; }
+  h1 { font-size:18pt; text-align:center; margin-bottom:2px; }
+  .meta { text-align:center; font-size:10pt; color:#555; margin-bottom:16px; }
+  h2 { font-size:12.5pt; margin:16px 0 6px; border-bottom:1px solid #ccc; padding-bottom:3px; }
+  p { text-align:justify; margin:0 0 9px; }
+  ul { margin:0 0 9px 18px; } li { margin-bottom:4px; }
+  table { border-collapse:collapse; width:100%; font-size:9.5pt; margin:8px 0 12px; }
+  th,td { border:1px solid #cbd5e1; padding:5px 7px; text-align:left; vertical-align:top; }
+  th { background:#eef2ff; }
+  .yes { color:#b91c1c; font-weight:700; } .no { color:#166534; font-weight:700; }
+  .decl { background:#f0fdf4; border:1px solid #bbf7d0; border-radius:6px; padding:11px 14px; font-size:10.5pt; }
+  .disc { font-size:8.7pt; color:#666; font-style:italic; margin-top:14px; }
+</style>
+</head>
+<body>
+
+<h1>NinaivX — Ethics &amp; Voice Licensing Statement</h1>
+<div class="meta">Why this project requires no ethical approval · Ashwin Kumar Ramesh Kumar · MSc AI, University of Sheffield</div>
+
+<h2>1. Purpose</h2>
+<p>
+  This statement sets out why the NinaivX project, as built and evaluated for this dissertation, does
+  <b>not require ethical approval</b>, and why its use of synthesised voices raises <b>no copyright or
+  consent concerns</b>. It covers the persona data, the voices used, and the voice-cloning demonstration.
+</p>
+
+<h2>2. What triggers ethical approval</h2>
+<p>
+  Ethical approval (and data-protection duties) are triggered by <b>collecting or using data from real,
+  identifiable people</b> — for example interviews, surveys or user studies with human participants, or
+  the use of a real person's <b>personal or biometric data</b> (a real individual's voice is biometric
+  data). Where a project involves <b>no human participants and no real personal data</b>, ethical
+  approval is generally not required.
+</p>
+
+<h2>3. How NinaivX avoids it — a synthetic-only design</h2>
+<p>
+  Every element of the build and evaluation uses <b>fictional, self-authored (synthetic) data</b> and
+  <b>synthetic voices</b>. No real, identifiable person's data is collected, stored or processed.
+</p>
+<table>
+  <tr><th>Activity in the project</th><th>Real, identifiable person?</th><th>Personal / biometric data?</th><th>Ethical approval</th><th>Copyright / consent</th></tr>
+  <tr><td>Personas (fictional characters authored by the developer)</td><td class="no">No</td><td class="no">No</td><td class="no">Not required</td><td>Not applicable</td></tr>
+  <tr><td>ElevenLabs <i>listed</i> (default) voices used for speech</td><td class="no">No</td><td class="no">No</td><td class="no">Not required</td><td>Licensed under ElevenLabs' Terms of Service</td></tr>
+  <tr><td>Voice cloning demonstrated on an <b>AI-generated</b> sample</td><td class="no">No</td><td class="no">No</td><td class="no">Not required</td><td>Sample generated via the developer's own licensed account</td></tr>
+  <tr><td>Technical evaluation (fabrication test) on synthetic personas</td><td class="no">No</td><td class="no">No</td><td class="no">Not required</td><td>Not applicable</td></tr>
+</table>
+
+<h2>4. Voices — licensing</h2>
+<p>
+  The voices used for speech synthesis are ElevenLabs' <b>default (listed) voices</b>. These are
+  synthetic or professionally-licensed voices for which <b>ElevenLabs holds the rights</b>; generated
+  audio is used under ElevenLabs' Terms of Service through the developer's own account. They are
+  <b>not recordings of, and do not identify, any real individual</b>, so they involve no personal data
+  and require no separate copyright clearance for this academic, non-commercial use.
+</p>
+
+<h2>5. Voice cloning — demonstrated with synthetic samples only</h2>
+<p>
+  The application includes a voice-cloning feature (upload a recording &rarr; clone &rarr; assign to a
+  persona). For the demonstration and evaluation this is exercised <b>only on AI-generated (synthetic)
+  voice samples</b> — for example a clip produced by the project's own text-to-speech via
+  <code>GET /api/synthetic-voice</code>. Because the cloned sample is <b>not a real person</b> and is
+  generated through the developer's own licensed account, this raises <b>no consent, copyright or ethics
+  issue</b>. Male and female synthetic samples are provided in the app for this purpose.
+</p>
+
+<h2>6. Explicitly out of scope (would require approval)</h2>
+<p>The following are <b>not</b> performed in this dissertation, and would each require ethical approval and, where relevant, consent and licensing:</p>
+<ul>
+  <li>Cloning the voice of a <b>real, identifiable person</b> (living or deceased) — a real voice is biometric personal data. <span class="yes">Requires approval + consent.</span></li>
+  <li>Any <b>study with real participants</b> (interviews, questionnaires, usability testing). <span class="yes">Requires approval.</span></li>
+  <li>Collecting or processing <b>real users' personal data</b>. <span class="yes">Requires approval.</span></li>
+</ul>
+
+<h2>7. Declaration</h2>
+<div class="decl">
+  The NinaivX build and evaluation use only <b>fictional (synthetic) personas</b> and <b>synthetic voices</b>.
+  There are <b>no human participants</b> and <b>no real personal or biometric data</b>. The voices are
+  ElevenLabs' licensed default voices, and voice cloning is demonstrated solely on AI-generated samples.
+  On this basis, the project <b>does not require ethical approval</b>, and its voice use raises <b>no
+  copyright or consent concerns</b>.
+</div>
+
+<p class="disc">
+  Note: this statement records the student's justification for the scope described above. The final
+  determination of whether ethical approval is required rests with the University of Sheffield's ethics
+  review process, and voice-tool usage is subject to ElevenLabs' current Terms of Service. This document
+  is not legal advice. If the project scope later changes to involve any real person's data, ethical
+  approval must be sought before proceeding.
+</p>
+
+</body>
+</html>

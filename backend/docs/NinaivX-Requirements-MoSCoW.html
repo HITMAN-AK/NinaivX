@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>NinaivX — Requirements (MoSCoW)</title>
+<style>
+  @page { size: A4 landscape; margin: 12mm 12mm; }
+  * { box-sizing: border-box; }
+  body { font-family:"Segoe UI",Arial,sans-serif; color:#1f2937; font-size:9.3pt; line-height:1.38; }
+  h1 { font-size:16pt; color:#4338ca; text-align:center; margin-bottom:2px; }
+  .meta { text-align:center; font-size:9pt; color:#6b7280; margin-bottom:8px; }
+  p { margin:0 0 8px; font-size:9pt; }
+  h2 { font-size:11.5pt; margin:14px 0 5px; padding:4px 8px; border-radius:5px; color:#fff; }
+  h2.gaps  { background:#7f1d1d; }
+  h2.must  { background:#4338ca; }
+  h2.should{ background:#0d9488; }
+  h2.could { background:#9a6b00; }
+  h2.wont  { background:#6b7280; }
+  h2.trace { background:#166534; }
+  table { border-collapse:collapse; width:100%; margin:0 0 8px; }
+  th,td { border:1px solid #cbd5e1; padding:4px 6px; vertical-align:top; text-align:left; }
+  th { background:#eef2ff; font-size:8.6pt; }
+  td.id { font-weight:700; white-space:nowrap; width:34px; }
+  td.gap { font-weight:700; white-space:nowrap; width:60px; color:#7f1d1d; }
+  td.st { white-space:nowrap; text-align:center; font-weight:700; width:52px; }
+  .done { color:#059669; } .part { color:#b45309; } .plan { color:#1d4ed8; } .omit { color:#b91c1c; } .na { color:#6b7280; }
+  .legend { font-size:8.7pt; background:#f8f8fb; border:1px solid #e3e3ea; border-radius:6px; padding:7px 10px; margin:8px 0 10px; }
+  .note { font-size:8.3pt; color:#555; font-style:italic; }
+  td.gid { font-weight:700; color:#7f1d1d; white-space:nowrap; width:38px; }
+</style>
+</head>
+<body>
+
+<h1>NinaivX — Requirements Specification (MoSCoW)</h1>
+<div class="meta">Derived from the Literature Gap Analysis · Ashwin Kumar Ramesh Kumar · MSc AI, University of Sheffield</div>
+
+<p>
+  Requirements are specified using <b>MoSCoW</b> prioritisation (<b>Must</b>, <b>Should</b>, <b>Could</b>,
+  <b>Won't have this time</b>) and are <b>derived from the gaps identified in the Literature Survey</b> (see the
+  Gap Analysis). Each requirement records the <b>gap it addresses</b> and its <b>delivery status</b>, so the
+  document shows why each requirement exists, what is delivered, and what is deliberately omitted. Requirements
+  marked <i>Enabling</i> are engineering necessities that make the gap-driven requirements deliverable; those
+  marked <i>Scope</i> come from the product vision rather than a literature gap.
+</p>
+
+<div class="legend">
+  <b>Status key:</b> <span class="done">✓ Implemented</span> ·
+  <span class="part">◑ Partial</span> · <span class="plan">⧖ Planned</span> ·
+  <span class="omit">✗ Omitted</span> · <span class="na">— Out of scope</span>
+</div>
+
+<h2 class="gaps">Gaps identified in the literature (source of the requirements)</h2>
+<table>
+  <tr><th>ID</th><th>Gap in existing work</th><th>Evidence / systems</th><th>Ref</th></tr>
+  <tr><td class="gid">G1</td><td>Static memorials cannot hold a real conversation — they only replay recordings.</td><td>HereAfter AI</td><td>[16]</td></tr>
+  <tr><td class="gid">G2</td><td>Existing griefbots/companions are text-only, lacking natural voice interaction.</td><td>Project December, Replika, XiaoIce</td><td>[17][12–15][11]</td></tr>
+  <tr><td class="gid">G3</td><td>Unconstrained generative models fabricate things the real person never said (hallucination).</td><td>GPT-3, Project December, YOV</td><td>[3][19][17][26]</td></tr>
+  <tr><td class="gid">G4</td><td>No AI-transparency disclosure documented, although the ethics literature requires it.</td><td>YOV; Hollanek et al.</td><td>[25][26]</td></tr>
+  <tr><td class="gid">G5</td><td>Engagement-driven design fosters dependency; systems are not designed for grief and closure (one product frames grief as "a problem to be solved").</td><td>Replika, XiaoIce, YOV</td><td>[11][15][26]</td></tr>
+  <tr><td class="gid">G6</td><td>Sensitive data of the deceased is handled opaquely; consent and privacy unresolved.</td><td>Microsoft patent; US commercial products; Öhman &amp; Floridi</td><td>[18][23][24]</td></tr>
+  <tr><td class="gid">G7</td><td>Systems are closed and proprietary; the architecture cannot be inspected or reproduced.</td><td>YOV, Microsoft patent</td><td>[18][26]</td></tr>
+  <tr><td class="gid">G8</td><td>No published evaluation of safety or effectiveness.</td><td>YOV, Project December</td><td>[17][26]</td></tr>
+  <tr><td class="gid">G9</td><td>Scope is limited to the deceased; no companion mode addressing loneliness.</td><td>YOV</td><td>[26]</td></tr>
+</table>
+
+<h2 class="must">MUST HAVE — core requirements without which the system has no value</h2>
+<table>
+  <tr><th>ID</th><th>Requirement</th><th>Gap</th><th>Status</th><th>Where satisfied / notes</th></tr>
+  <tr><td class="id">M1</td><td>Authenticate every request with a verified Supabase token (JWT).</td><td class="gap">G6</td><td class="st done">✓</td><td>app/core/auth.py; protects the deceased's sensitive data. Rejects invalid tokens (401).</td></tr>
+  <tr><td class="id">M2</td><td>Onboard a user and store their profile (name, age, language).</td><td class="gap">Enabling</td><td class="st done">✓</td><td>POST /api/onboard, GET /api/me.</td></tr>
+  <tr><td class="id">M3</td><td>Create personas of two types: deceased (legacy) and companion.</td><td class="gap">G9</td><td class="st done">✓</td><td>POST /api/personas; PersonaType enum. Extends scope beyond the deceased-only products.</td></tr>
+  <tr><td class="id">M4</td><td>Route a conversation to the correct persona type automatically.</td><td class="gap">G9, G3</td><td class="st done">✓</td><td>Supervisor router; enables different safety profiles per mode.</td></tr>
+  <tr><td class="id">M5</td><td>Hold a coherent, generative conversation in character as the persona.</td><td class="gap">G1</td><td class="st done">✓</td><td>POST /api/chat → LangGraph agent → Claude. Answers novel questions, unlike static memorials.</td></tr>
+  <tr><td class="id">M6</td><td>Remember previous conversations across sessions.</td><td class="gap">G1</td><td class="st done">✓</td><td>Rolling summary checkpoint in Conversation table.</td></tr>
+  <tr><td class="id">M7</td><td>Convert the AI reply to natural speech (text-to-speech).</td><td class="gap">G2</td><td class="st done">✓</td><td>voice_service.text_to_speech (ElevenLabs).</td></tr>
+  <tr><td class="id">M8</td><td>Convert the user's speech to text (speech-to-text).</td><td class="gap">G2</td><td class="st done">✓</td><td>voice_service.speech_to_text (ElevenLabs Scribe).</td></tr>
+  <tr><td class="id">M9</td><td>Support an end-to-end voice conversation (audio in → audio out).</td><td class="gap">G1, G2</td><td class="st done">✓</td><td>POST /api/voice-chat (full loop, verified live).</td></tr>
+  <tr><td class="id">M10</td><td>Air-gap the deceased persona from the internet to prevent fabricated information.</td><td class="gap">G3, G6</td><td class="st done">✓</td><td>Deceased node has no tools bound — a code-level guarantee, not a prompt request.</td></tr>
+  <tr><td class="id">M11</td><td>Enforce per-user data isolation; a user may only access their own personas.</td><td class="gap">G6</td><td class="st done">✓</td><td>Ownership check on every persona route.</td></tr>
+  <tr><td class="id">M12</td><td>Persist users, personas and memory in a database.</td><td class="gap">Enabling</td><td class="st done">✓</td><td>Supabase (PostgreSQL) via SQLAlchemy.</td></tr>
+  <tr><td class="id">M13</td><td>Ground the deceased persona only in its stored personality and memory (no invented sources).</td><td class="gap">G3</td><td class="st part">◑</td><td>Grounded via prompt-context injection of personality + summary. A full vector-retrieval (RAG) pipeline over uploaded documents is not implemented — see C1.</td></tr>
+  <tr><td class="id">M14</td><td>The architecture shall be openly documented and reproducible.</td><td class="gap">G7</td><td class="st done">✓</td><td>README, architecture diagram and full source; contrasts with closed commercial products.</td></tr>
+  <tr><td class="id">M15</td><td>The safety design shall be empirically evaluated (project-level requirement).</td><td class="gap">G8</td><td class="st plan">⧖</td><td>Planned: a <b>technical evaluation</b> measuring fabrication in the air-gapped legacy mode vs the web-connected companion mode, using <b>synthetic personas</b>. No human participants, so no ethical approval is required (no user study is conducted).</td></tr>
+</table>
+
+<h2 class="should">SHOULD HAVE — important, included but not strictly vital</h2>
+<table>
+  <tr><th>ID</th><th>Requirement</th><th>Gap</th><th>Status</th><th>Where satisfied / notes</th></tr>
+  <tr><td class="id">S1</td><td>The companion persona may use the live internet for current information.</td><td class="gap">G9</td><td class="st done">✓</td><td>web_search tool bound to companion node (ReAct loop).</td></tr>
+  <tr><td class="id">S2</td><td>Clone a voice from an uploaded audio sample.</td><td class="gap">G2</td><td class="st done">✓</td><td>POST /api/clone-voice (ElevenLabs).</td></tr>
+  <tr><td class="id">S3</td><td>Assign a cloned or ready-made voice to a persona.</td><td class="gap">G2</td><td class="st done">✓</td><td>clone-voice (persona_id), select-voice, PATCH persona.</td></tr>
+  <tr><td class="id">S4</td><td>Manage personas: list, view, update, delete.</td><td class="gap">Enabling</td><td class="st done">✓</td><td>GET/PATCH/DELETE /api/personas[/{id}].</td></tr>
+  <tr><td class="id">S5</td><td>Keep perceived latency low so conversation feels natural.</td><td class="gap">G1</td><td class="st done">✓</td><td>Memory summary runs as a FastAPI background task.</td></tr>
+  <tr><td class="id">S6</td><td>Degrade gracefully if a voice provider key is absent (no crash).</td><td class="gap">Enabling</td><td class="st done">✓</td><td>Lazy voice service; returns 503 instead of failing at startup.</td></tr>
+  <tr><td class="id">S7</td><td>Respond in the chosen language (per persona), colloquially.</td><td class="gap">Scope</td><td class="st done">✓</td><td>Each persona has its own <b>language</b>; the prompt drives natural, colloquial, slang-aware replies and TTS speaks them. Native <i>accent</i> depends on the voice asset (upload/clone a native voice — the default library is English).</td></tr>
+  <tr><td class="id">S8</td><td>Produce speech-appropriate text (no emojis or stage directions).</td><td class="gap">G2</td><td class="st done">✓</td><td>TTS-tuned system prompts (agents/prompts.py).</td></tr>
+  <tr><td class="id">S9</td><td>Disclose to the user that they are speaking with an AI (transparency).</td><td class="gap">G4</td><td class="st done">✓</td><td>Persona stays in character but honestly confirms it is an AI if directly asked (verified live); public notice via GET /api/disclosure and in profile/persona responses.</td></tr>
+  <tr><td class="id">S10</td><td>Support healthy grieving and closure; avoid engagement-maximising or dependency-forming design.</td><td class="gap">G5</td><td class="st part">◑</td><td>By design: prompts orient toward comfort and closure; no gamification, streaks or engagement mechanics. Effectiveness to be assessed in the evaluation (M15).</td></tr>
+</table>
+
+<h2 class="could">COULD HAVE — desirable; omitted for now, candidates for future work</h2>
+<table>
+  <tr><th>ID</th><th>Requirement</th><th>Gap</th><th>Status</th><th>Notes</th></tr>
+  <tr><td class="id">C1</td><td>True retrieval-augmented generation (RAG) over uploaded memories/documents via a vector store.</td><td class="gap">G3</td><td class="st omit">✗</td><td>Omitted. Would deepen the grounding in M13; current grounding is prompt-context only. Clear future work.</td></tr>
+  <tr><td class="id">C2</td><td>Real-time streaming / full-duplex audio (sub-second response).</td><td class="gap">G1, G2</td><td class="st omit">✗</td><td>Omitted. Current design is request/response (turn-based), not streaming.</td></tr>
+  <tr><td class="id">C3</td><td>Meter voice usage (minutes) to support freemium limits.</td><td class="gap">Scope</td><td class="st omit">✗</td><td>Omitted. Commercial concern; not required for the research prototype.</td></tr>
+  <tr><td class="id">C4</td><td>Production hardening: rate limiting and restricted CORS.</td><td class="gap">Enabling</td><td class="st omit">✗</td><td>Omitted. CORS is currently open ("*") for development.</td></tr>
+  <tr><td class="id">C5</td><td>Store full conversation transcripts (not only summaries).</td><td class="gap">G6</td><td class="st omit">✗</td><td>Deliberately omitted for privacy; memory is summary-based by design.</td></tr>
+</table>
+
+<h2 class="wont">WON'T HAVE (this time) — explicitly out of scope for this dissertation</h2>
+<table>
+  <tr><th>ID</th><th>Requirement</th><th>Gap</th><th>Status</th><th>Notes</th></tr>
+  <tr><td class="id">W1</td><td>Real-time video / lip-synced avatars of the persona.</td><td class="gap">Scope</td><td class="st na">—</td><td>Future vision (roadmap Phase 3); out of scope.</td></tr>
+  <tr><td class="id">W2</td><td>Dedicated multilingual ("Polyglot") models for ancestral languages.</td><td class="gap">Scope</td><td class="st na">—</td><td>Future expansion; beyond current timeframe.</td></tr>
+  <tr><td class="id">W3</td><td>Payment, subscription and billing integration.</td><td class="gap">Scope</td><td class="st na">—</td><td>Commercial concern, not part of the research artefact.</td></tr>
+  <tr><td class="id">W4</td><td>Public mobile app-store deployment.</td><td class="gap">Scope</td><td class="st na">—</td><td>The dissertation delivers the backend + evaluation, not a shipped app.</td></tr>
+  <tr><td class="id">W5</td><td>Company incorporation, legal and GDPR consultancy.</td><td class="gap">Scope</td><td class="st na">—</td><td>Outside the technical scope of the dissertation.</td></tr>
+</table>
+
+<h2 class="trace">Traceability — every identified gap is addressed by at least one requirement</h2>
+<table>
+  <tr><th>Gap</th><th>Addressed by</th><th>Coverage status</th></tr>
+  <tr><td class="gid">G1</td><td>M5, M6, M9, S5 (C2 future)</td><td>✓ Delivered</td></tr>
+  <tr><td class="gid">G2</td><td>M7, M8, M9, S2, S3, S8 (C2 future)</td><td>✓ Delivered</td></tr>
+  <tr><td class="gid">G3</td><td>M4, M10, M13 (C1 future)</td><td>✓ Air-gap delivered; ◑ grounding basic</td></tr>
+  <tr><td class="gid">G4</td><td>S9</td><td>✓ Delivered</td></tr>
+  <tr><td class="gid">G5</td><td>S10 (assessed via M15)</td><td>◑ By design; evaluation pending</td></tr>
+  <tr><td class="gid">G6</td><td>M1, M10, M11, C5</td><td>✓ Delivered</td></tr>
+  <tr><td class="gid">G7</td><td>M14</td><td>✓ Delivered</td></tr>
+  <tr><td class="gid">G8</td><td>M15</td><td>⧖ Planned (dissertation evaluation)</td></tr>
+  <tr><td class="gid">G9</td><td>M3, M4, S1</td><td>✓ Delivered</td></tr>
+</table>
+
+<p class="note">
+  Summary: 15 Must-have requirements (13 implemented, 1 partial — M13 grounding, 1 planned — M15 evaluation);
+  10 Should-have (9 implemented, 1 partial — S10 grief-appropriate design); 5 Could-have recorded
+  as future work; 5 Won't-have explicitly out of scope. All nine literature gaps (G1–G9) are traceable to at least
+  one requirement.
+</p>
+
+</body>
+</html>

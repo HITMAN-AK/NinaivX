@@ -1,0 +1,41 @@
+# ---- Secrets (NEVER commit) ----
+.env
+.env.*
+*.env
+backend/.env
+frontend/.env
+# ...but DO keep the safe placeholder templates:
+!.env.example
+!backend/.env.example
+
+# ---- Python (backend) ----
+.venv/
+venv/
+env/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+
+# ---- Node / Expo (frontend) ----
+node_modules/
+.expo/
+.expo-shared/
+dist/
+web-build/
+*.log
+npm-debug.*
+yarn-debug.*
+yarn-error.*
+
+# ---- OS / editor ----
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+
+# ---- Build / temp ----
+*.tmp
+*.bak

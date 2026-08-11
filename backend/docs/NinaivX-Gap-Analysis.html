@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>NinaivX — Literature Gap Analysis</title>
+<style>
+  @page { size: A4 landscape; margin: 12mm 12mm; }
+  * { box-sizing: border-box; }
+  body { font-family:"Segoe UI",Arial,sans-serif; color:#1f2937; font-size:9.2pt; line-height:1.35; }
+  h1 { font-size:16pt; color:#4338ca; text-align:center; margin-bottom:2px; }
+  .meta { text-align:center; font-size:9pt; color:#6b7280; margin-bottom:8px; }
+  p.intro { font-size:8.9pt; margin:0 0 8px; }
+  h2 { font-size:11pt; margin:12px 0 5px; padding:4px 8px; border-radius:5px; color:#fff; }
+  h2.a { background:#7f1d1d; }
+  h2.b { background:#166534; }
+  table { border-collapse:collapse; width:100%; margin-bottom:8px; }
+  th,td { border:1px solid #cbd5e1; padding:4px 6px; vertical-align:top; text-align:left; }
+  th { background:#eef2ff; font-size:8.6pt; }
+  td.sys { font-weight:700; width:105px; }
+  td.gap { color:#7f1d1d; }
+  td.sol { color:#14532d; }
+  td.ref { width:56px; font-size:8pt; color:#555; }
+  td.gid { font-weight:700; color:#7f1d1d; white-space:nowrap; width:34px; }
+  td.req { font-weight:700; color:#1d4ed8; white-space:nowrap; width:120px; font-size:8.2pt; }
+  .gtag { font-weight:700; color:#7f1d1d; }
+  .rtag { font-weight:700; color:#1d4ed8; }
+  .src { font-size:8pt; color:#666; margin-top:6px; }
+</style>
+</head>
+<body>
+
+<h1>NinaivX — Literature Gap Analysis</h1>
+<div class="meta">What prior work lacks, the gaps it reveals, and the requirements those gaps generate · Ashwin Kumar Ramesh Kumar · MSc AI, University of Sheffield</div>
+
+<p class="intro">
+  This document distils the Literature Survey into a gap analysis and links it directly to the Requirements
+  Specification. Each gap carries an ID (<span class="gtag">G1–G9</span>) used identically in the
+  <b>Requirements (MoSCoW)</b> document, and each row shows the <span class="rtag">requirements</span> that gap
+  generated. Reference numbers [n] match the Literature Survey. Where a commercial system does not publicly
+  document a safeguard, this is stated as &ldquo;not documented&rdquo; rather than asserted as absent.
+</p>
+
+<h2 class="a">A. System-by-system — what it lacks, and what NinaivX does about it</h2>
+<table>
+  <tr><th>Prior system / work</th><th>What it offers</th><th>Gap — what it lacks</th><th>Gap ID</th><th>How NinaivX addresses it</th><th>Req.</th><th>Ref</th></tr>
+
+  <tr>
+    <td class="sys">HereAfter AI</td>
+    <td>An interactive &ldquo;life story&rdquo; answering in the deceased's own recorded voice.</td>
+    <td class="gap">Replays pre-recorded, consented clips only — cannot answer questions it was never asked.</td>
+    <td class="gid">G1</td>
+    <td class="sol">Generative, real-time conversation that responds to novel questions, with memory across sessions.</td>
+    <td class="req">M5, M6, M9</td>
+    <td class="ref">[16]</td>
+  </tr>
+
+  <tr>
+    <td class="sys">Project December</td>
+    <td>A GPT-3 &ldquo;griefbot&rdquo;; free-form chat built from a person's messages.</td>
+    <td class="gap">Text-only; unconstrained model can fabricate memories; a single anecdotal case with no evaluation.</td>
+    <td class="gid">G2, G3, G8</td>
+    <td class="sol">Full voice loop; air-gapped and grounded to curb fabrication; safety design empirically evaluated.</td>
+    <td class="req">M7–M9, M10, M13, M15</td>
+    <td class="ref">[17]</td>
+  </tr>
+
+  <tr>
+    <td class="sys">Replika</td>
+    <td>A popular AI companion; text chat; emotional relationship.</td>
+    <td class="gap">Text-heavy; engagement-driven design linked to emotional dependence and harm; not designed for grief.</td>
+    <td class="gid">G2, G5</td>
+    <td class="sol">Voice-first interaction; oriented to comfort and closure, with no engagement-maximising mechanics.</td>
+    <td class="req">M7–M9, S10</td>
+    <td class="ref">[12–15]</td>
+  </tr>
+
+  <tr>
+    <td class="sys">XiaoIce</td>
+    <td>An empathetic social chatbot engineered for long-term engagement.</td>
+    <td class="gap">Text-based; optimised to maximise engagement; no bereavement safeguards.</td>
+    <td class="gid">G2, G5</td>
+    <td class="sol">Voice; closure-oriented design rather than engagement maximisation.</td>
+    <td class="req">M7–M9, S10</td>
+    <td class="ref">[11]</td>
+  </tr>
+
+  <tr>
+    <td class="sys">Microsoft patent</td>
+    <td>A method to build a chatbot of a specific person (incl. deceased) from their data.</td>
+    <td class="gap">A design claim, not a deployed or reproducible system; consent and privacy for the deceased unresolved.</td>
+    <td class="gid">G6, G7</td>
+    <td class="sol">A working, openly documented implementation with authentication and strict per-user data isolation.</td>
+    <td class="req">M1, M11, M14</td>
+    <td class="ref">[18]</td>
+  </tr>
+
+  <tr>
+    <td class="sys">You, Only Virtual (YOV)</td>
+    <td>Commercial voice griefbot: phone-call interface, voice cloning, memory, generative conversation.</td>
+    <td class="gap">Frames grief as &ldquo;a problem to be solved&rdquo;; no documented safety or transparency; closed/proprietary; unevaluated; deceased-only.</td>
+    <td class="gid">G3, G4, G5, G7, G8, G9</td>
+    <td class="sol">Air-gap safety; AI disclosure; closure-oriented stance; open architecture; empirical evaluation; adds a companion mode.</td>
+    <td class="req">M10, M14, M15, S9, S10, M3, S1</td>
+    <td class="ref">[26–27]</td>
+  </tr>
+
+  <tr>
+    <td class="sys">Unconstrained LLMs (e.g. GPT-3)</td>
+    <td>Highly fluent, human-like text generation.</td>
+    <td class="gap">Prone to &ldquo;hallucination&rdquo; — inventing facts or opinions the real person never had.</td>
+    <td class="gid">G3</td>
+    <td class="sol">Deceased persona air-gapped from the internet (code-level) and grounded in stored personality + memory.</td>
+    <td class="req">M4, M10, M13</td>
+    <td class="ref">[3][19]</td>
+  </tr>
+</table>
+
+<h2 class="b">B. Gap register (G1–G9) — the requirements each gap generated</h2>
+<table>
+  <tr><th>ID</th><th>Gap in existing work</th><th>Why it matters</th><th>Requirements generated</th><th>Status</th><th>Ref</th></tr>
+  <tr><td class="gid">G1</td><td class="gap">Static memorials cannot hold a real conversation — they only replay recordings.</td><td>The bereaved cannot ask anything new; the experience breaks down.</td><td class="req">M5, M6, M9, S5 (C2 future)</td><td>✓ Delivered</td><td class="ref">[16]</td></tr>
+  <tr><td class="gid">G2</td><td class="gap">Existing griefbots/companions are text-only, lacking natural voice interaction.</td><td>Voice, not text, carries the presence of a lost person.</td><td class="req">M7, M8, M9, S2, S3, S8 (C2 future)</td><td>✓ Delivered</td><td class="ref">[17][12–15][11]</td></tr>
+  <tr><td class="gid">G3</td><td class="gap">Unconstrained generative models fabricate things the real person never said.</td><td>An AI imitating a real dead person must not invent memories.</td><td class="req">M4, M10, M13 (C1 future)</td><td>✓ air-gap · ◑ grounding</td><td class="ref">[3][19][17][26]</td></tr>
+  <tr><td class="gid">G4</td><td class="gap">No AI-transparency disclosure documented, although the ethics literature requires it.</td><td>Grieving users deserve to know they are speaking with an AI.</td><td class="req">S9</td><td>✓ Delivered</td><td class="ref">[25][26]</td></tr>
+  <tr><td class="gid">G5</td><td class="gap">Engagement-driven design fosters dependency; systems are not designed for grief and closure.</td><td>Maximising engagement can block healthy mourning.</td><td class="req">S10 (assessed via M15)</td><td>◑ By design; evaluation pending</td><td class="ref">[11][15][26]</td></tr>
+  <tr><td class="gid">G6</td><td class="gap">Sensitive data of the deceased is handled opaquely; consent and privacy unresolved.</td><td>A dead person's voice and data are deeply sensitive and cannot consent.</td><td class="req">M1, M10, M11, C5</td><td>✓ Delivered</td><td class="ref">[18][23][24]</td></tr>
+  <tr><td class="gid">G7</td><td class="gap">Systems are closed and proprietary; the architecture cannot be inspected or reproduced.</td><td>Nothing can be verified, criticised or built upon.</td><td class="req">M14</td><td>✓ Delivered</td><td class="ref">[18][26]</td></tr>
+  <tr><td class="gid">G8</td><td class="gap">No published evaluation of safety or effectiveness.</td><td>Products reach grieving users with no evidence they are safe.</td><td class="req">M15</td><td>⧖ Planned (Aug evaluation)</td><td class="ref">[17][26]</td></tr>
+  <tr><td class="gid">G9</td><td class="gap">Scope is limited to the deceased; no companion mode addressing loneliness.</td><td>Loneliness is a distinct, widespread need the field ignores.</td><td class="req">M3, M4, S1</td><td>✓ Delivered</td><td class="ref">[26]</td></tr>
+</table>
+
+<p class="src">
+  Status key: ✓ implemented · ◑ partial/basic · ⧖ planned. Gap IDs (G1–G9) and requirement IDs (M/S/C) are shared
+  with the Requirements (MoSCoW) document, which contains the full specification and traceability matrix.
+  References [n] correspond to the Literature Survey (verified June 2026). Commercial systems' undocumented
+  safeguards are reported as &ldquo;not documented&rdquo;, not asserted as missing.
+</p>
+
+</body>
+</html>

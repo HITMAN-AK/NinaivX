@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>NinaivX — Project Framing</title>
+<style>
+  @page { size: A4; margin: 20mm 18mm; }
+  * { box-sizing: border-box; }
+  body { font-family: "Georgia","Times New Roman",serif; color:#111; font-size:11.5pt; line-height:1.55; }
+  h1 { font-size:18pt; text-align:center; margin-bottom:2px; }
+  .meta { text-align:center; font-size:10pt; color:#555; margin-bottom:16px; }
+  h2 { font-size:13.5pt; margin:18px 0 6px; border-bottom:1px solid #ccc; padding-bottom:3px; }
+  p { text-align:justify; margin:0 0 10px; }
+  ol, ul { margin:0 0 10px 18px; } li { margin-bottom:5px; text-align:justify; }
+  .rq { background:#f5f3ff; border:1px solid #ddd6fe; border-radius:6px; padding:8px 12px; margin:6px 0; }
+  table { border-collapse:collapse; width:100%; font-size:10pt; margin:8px 0 12px; }
+  th,td { border:1px solid #cbd5e1; padding:6px 8px; text-align:left; vertical-align:top; }
+  th { background:#eef2ff; }
+  .note { font-size:9.5pt; color:#555; font-style:italic; }
+</style>
+</head>
+<body>
+
+<h1>NinaivX — Aims, Objectives, Research Questions &amp; Contribution</h1>
+<div class="meta">Ashwin Kumar Ramesh Kumar · MSc Artificial Intelligence, University of Sheffield · Project Framing (draft)</div>
+
+<h2>1. Problem and motivation</h2>
+<p>
+  Grief and loneliness are widespread and serious. The World Health Organization reports that around one in six
+  people worldwide is affected by loneliness, linked to an estimated 871,000 deaths per year [WHO 2025]. When a
+  loved one dies, the bereaved are left with photographs but no way to hear the person's voice or interact with
+  their personality. In parallel, commercial &ldquo;digital afterlife&rdquo; services have begun to appear,
+  demonstrating both genuine demand and significant ethical risk. This project investigates how a voice-based
+  conversational system for the bereaved and the lonely can be designed to be <i>emotionally supportive</i>,
+  <i>factually safe</i>, and <i>privacy-respecting</i>, and evaluates whether such a design is effective.
+</p>
+
+<h2>2. Aim</h2>
+<p>
+  To design, implement, and evaluate a privacy-first, dual-mode voice conversational AI that (a) supports healthy
+  grieving and companionship, and (b) reduces the risk of factual fabrication when representing a real, deceased
+  person, through an explicit safety-oriented architecture &mdash; and to critically assess this approach against
+  existing commercial systems and the relevant ethical literature.
+</p>
+
+<h2>3. Objectives</h2>
+<ol>
+  <li>Review the literature on conversational AI, speech synthesis and voice cloning, AI companionship, the
+      digital afterlife industry, and AI safety/ethics, to identify the gap (completed; see Literature Survey).</li>
+  <li>Design a dual-mode architecture comprising an <i>air-gapped, retrieval-constrained</i> &ldquo;legacy&rdquo;
+      (deceased) mode and a <i>web-connected</i> &ldquo;companion&rdquo; mode, mediated by a supervisor router.</li>
+  <li>Implement the backend: agent orchestration, speech-to-text and text-to-speech, persona memory, voice
+      cloning, and secure authentication (completed).</li>
+  <li>Evaluate the design through a <b>technical evaluation</b> of factual fabrication in the legacy (air-gapped)
+      mode versus the companion (web-connected) mode, using <b>synthetic personas</b>. No human participants are
+      involved (no user study), so no ethical approval is required.</li>
+  <li>Critically discuss the ethical implications &mdash; consent, transparency, and grief support versus grief
+      replacement &mdash; relative to existing commercial systems.</li>
+</ol>
+
+<h2>4. Research questions</h2>
+<div class="rq"><b>RQ1.</b> Can an air-gapped, retrieval-constrained design reduce factual fabrication in a
+  voice-based legacy persona compared with an unconstrained generative approach, while maintaining perceived
+  conversational quality?</div>
+<div class="rq"><b>RQ2.</b> How can a single dual-mode architecture satisfy the differing safety and capability
+  requirements of a deceased (legacy) persona and a living (companion) persona?</div>
+
+<h2>5. Contribution</h2>
+<ul>
+  <li>A reproducible, openly-documented <b>dual-mode architecture</b> for safety-aware conversational voice AI.</li>
+  <li>An explicit <b>safety- and privacy-oriented design</b> (air-gapping the deceased persona) that operationalises
+      harms previously raised only in the ethics literature.</li>
+  <li>An <b>empirical evaluation</b> of that safety design &mdash; the element commercial products do not publish.</li>
+  <li>A <b>critical positioning</b> of the system against existing commercial offerings, including an ethical
+      discussion of grief support versus grief replacement.</li>
+</ul>
+
+<h2>6. Positioning against existing systems (esp. You Only Virtual)</h2>
+<p>
+  The existence of commercial systems such as You Only Virtual (YOV), HereAfter AI, Replika, and Project December
+  confirms the demand for this technology; it does not diminish the academic value of this work, which lies in an
+  explicit, open, evaluated, and ethically-grounded design rather than in commercial novelty. The clearest
+  contrast is with YOV, whose founder publicly frames the goal as the <i>elimination</i> of grief; this project
+  takes the opposite, evidence-informed position of <i>supporting</i> healthy grieving.
+</p>
+<table>
+  <tr><th>Dimension</th><th>You Only Virtual</th><th>NinaivX (this project)</th></tr>
+  <tr><td>Stance on grief</td><td>Aims to eliminate grief / avoid the &ldquo;hopelessness of forever&rdquo; (founder's stated goal)</td><td>Supports healthy grieving and closure; a comfort tool, not a permanent replacement</td></tr>
+  <tr><td>Personas</td><td>Deceased only</td><td>Dual-mode: deceased (legacy) and living companion</td></tr>
+  <tr><td>Factual safety</td><td>Generative; safety mechanisms not publicly documented</td><td>Explicit air-gapped, retrieval-constrained legacy mode to limit fabrication</td></tr>
+  <tr><td>Connectivity</td><td>Not publicly specified</td><td>Mode-dependent: legacy air-gapped, companion web-connected</td></tr>
+  <tr><td>Privacy</td><td>US commercial product</td><td>Privacy-first design (air-gapping; data-sovereignty intent)</td></tr>
+  <tr><td>Openness</td><td>Closed, proprietary</td><td>Open, documented, reproducible architecture</td></tr>
+  <tr><td>Evaluation</td><td>None published</td><td>Empirical evaluation of the safety design (core of this dissertation)</td></tr>
+</table>
+<p class="note">
+  Transparency (implemented): the legacy persona discloses its artificial nature — it stays in character but
+  honestly confirms it is an AI recreation if asked, and the app surfaces a disclosure notice (provided by the API)
+  at onboarding and as an in-app indicator, in line with transparency recommendations in the ethics literature
+  (Hollanek 2024).
+</p>
+
+<p class="note">Note: bracketed sources above refer to entries in the project's Literature Survey and reference list.</p>
+
+</body>
+</html>

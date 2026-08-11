@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>NinaivX — Literature Survey</title>
+<style>
+  @page { size: A4; margin: 20mm 18mm; }
+  * { box-sizing: border-box; }
+  body { font-family: "Georgia", "Times New Roman", serif; color:#111; font-size:11.5pt; line-height:1.55; }
+  h1 { font-size:18pt; text-align:center; margin-bottom:2px; }
+  .meta { text-align:center; font-size:10pt; color:#555; margin-bottom:4px; }
+  .note { font-size:9pt; color:#666; background:#f7f7f9; border:1px solid #e3e3ea; border-radius:6px;
+          padding:8px 12px; margin:14px 0 20px; font-family:Arial, sans-serif; }
+  h2 { font-size:13.5pt; margin:20px 0 6px; border-bottom:1px solid #ccc; padding-bottom:3px; }
+  h3 { font-size:11.5pt; margin:14px 0 4px; }
+  p { text-align:justify; margin:0 0 10px; }
+  cite, .cap { font-style:italic; }
+  .refs { font-size:10pt; }
+  .refs ol { padding-left:0; list-style:none; counter-reset:ref; }
+  .refs li { position:relative; padding-left:34px; margin-bottom:7px; text-align:left; }
+  .refs li::before { counter-increment:ref; content:"["counter(ref)"]"; position:absolute; left:0; }
+  .small { font-size:9.5pt; color:#444; }
+  a { color:#1a3e8c; text-decoration:none; word-break:break-all; }
+</style>
+</head>
+<body>
+
+<h1>Background and Literature Survey</h1>
+<div class="meta">Ashwin Kumar Ramesh Kumar &nbsp;·&nbsp; MSc Artificial Intelligence, University of Sheffield</div>
+
+<div class="note">
+  <b>Draft for the dissertation report.</b> All references were checked against primary publisher sources
+  (ACM, arXiv, ACL Anthology, Springer, IEEE, JMIR, Nature, USPTO, WHO). Before submission, verify each
+  citation against its original source and adapt the wording into your final report. Citations use the IEEE
+  numbered style [n]; the full list appears in the References section.
+</div>
+
+<h2>1. Introduction and scope</h2>
+<p>
+  This survey reviews the research and systems that underpin software designed to let a person hold a spoken
+  conversation with an artificial agent &mdash; either a general companion or an agent modelled on a specific,
+  often deceased, individual. The topic sits at the meeting point of four fields: <i>conversational artificial
+  intelligence</i> (AI), <i>speech technology</i>, <i>AI companionship</i>, and the emerging <i>digital afterlife
+  industry</i> (DAI), a term used for commercial services that manage or reconstruct a person's online presence
+  after death [18]. The review is organised by topic, and within each topic the work is presented from oldest to
+  newest so that the reader can follow how each advance responded to the limitations of the one before it.
+  Technical terms and abbreviations are defined on first use, as the field combines vocabulary from machine
+  learning, linguistics and human&ndash;computer interaction. The aim is to establish what already exists, to
+  discuss its strengths and weaknesses critically rather than merely list it, and to identify the gap that
+  remains open.
+</p>
+
+<h2>2. Conversational AI: from hand-written rules to neural language models</h2>
+<p>
+  The idea of a machine that converses in natural language is older than modern AI. The first widely known
+  example, ELIZA, was created by Weizenbaum in 1966 and imitated a psychotherapist by matching keywords in the
+  user's input and reflecting them back using hand-written rules [1]. ELIZA had no understanding or memory of the
+  conversation, yet users readily attributed feelings and comprehension to it &mdash; a phenomenon now called the
+  &ldquo;ELIZA effect&rdquo; [1]. This early observation is directly relevant to any emotionally sensitive
+  application, because it shows that people can form strong attachments to a system that does not, in fact,
+  understand them. For several decades afterwards, dialogue systems remained largely rule-based or
+  retrieval-based, selecting pre-written replies, and so were brittle outside their scripted domains.
+</p>
+<p>
+  The decisive shift came with the Transformer architecture introduced by Vaswani et al. in 2017, which replaced
+  earlier recurrent designs with a &ldquo;self-attention&rdquo; mechanism that lets a model weigh every word
+  against every other word in a sequence [2]. This architecture proved far more scalable and now underpins almost
+  all modern <i>large language models</i> (LLMs) &mdash; neural networks with very large numbers of trainable
+  parameters trained on broad text corpora. Building on it, Brown et al. presented GPT-3 in 2020, a 175-billion
+  parameter model able to perform many tasks from only a few examples in its prompt, without task-specific
+  retraining [3]. GPT-3 demonstrated unprecedented fluency, but its authors also documented a critical weakness:
+  the model can produce confident, fluent text that is factually wrong or biased [3]. For a system imitating a
+  real person, this is especially dangerous, as it could fabricate &ldquo;memories&rdquo; or opinions the person
+  never held. A related line of work, BERT (Devlin et al., 2019), used bidirectional pre-training to advance
+  language <i>understanding</i> tasks such as sentiment and intent detection [4]; however, because BERT is an
+  encoder it cannot itself generate spoken replies, and so contributes only to supporting components rather than
+  to the conversational response. In short, the field moved from understandable but rigid rule-based systems to
+  fluent but factually unreliable neural systems &mdash; trading brittleness for the new problem of
+  &ldquo;hallucination,&rdquo; discussed in Section 6.
+</p>
+
+<h2>3. Speech technology: synthesis, recognition and voice cloning</h2>
+<p>
+  A conversational agent that is experienced as a phone call requires two further capabilities:
+  <i>text-to-speech</i> (TTS), which converts text into audio, and <i>automatic speech recognition</i> (ASR),
+  also called speech-to-text, which converts the user's spoken words into text. A landmark in TTS was Tacotron 2
+  (Shen et al., 2018), which generated speech with a naturalness approaching human recordings, reaching a mean
+  opinion score (MOS, a standard 1&ndash;5 human rating of audio quality) of 4.53 [5]. Its limitation, however,
+  was that it produced a single, neutral speaking style and could not quickly reproduce the voice of a specific
+  individual, nor convey nuanced emotion [5] &mdash; both of which matter when the goal is to evoke a particular
+  person.
+</p>
+<p>
+  On the recognition side, Whisper (Radford et al., 2023) was trained on roughly 680,000 hours of weakly
+  labelled audio and generalised robustly across accents and noise without fine-tuning [6]. Yet Whisper is
+  designed to process complete audio segments in batches, can &ldquo;hallucinate&rdquo; spurious text during
+  silences, and introduces latency &mdash; all of which complicate real-time, turn-by-turn conversation [6].
+  The most direct response to Tacotron's inability to mimic individuals came with VALL-E (Wang et al., 2023),
+  which reframed TTS as a language-modelling problem over audio &ldquo;codec&rdquo; tokens and could clone a
+  speaker's voice from only a three-second sample [7]. This capability is striking, but the authors themselves
+  highlighted its dangers: such easy cloning raises severe consent and impersonation risks, and Microsoft
+  withheld the model from public release for this reason [7]. These same techniques have since been
+  commercialised by companies such as ElevenLabs, founded in 2022, whose cloud application programming interface
+  (API) offers multilingual synthesis and few-second voice cloning [8]. As a proprietary cloud service, however,
+  audio must leave the user's device for processing, which raises data-protection concerns &mdash; a significant
+  issue when the data is the voice of a deceased person [8]. The progression here is clear: synthesis quality and
+  the ability to clone a specific voice have advanced rapidly, but each advance has sharpened the ethical and
+  privacy problems rather than resolved them.
+</p>
+
+<h2>4. AI companions and the problem of loneliness</h2>
+<p>
+  Interest in conversational agents as social companions is driven partly by the documented scale of loneliness.
+  The World Health Organization's Commission on Social Connection reported in 2025 that approximately one in six
+  people worldwide is affected by loneliness, and that social isolation and loneliness are linked to an estimated
+  871,000 deaths each year [9]. Earlier, the Cigna 2018 U.S. Loneliness Index found that nearly half of surveyed
+  Americans (46%) reported sometimes or always feeling alone [10]. (It should be noted that the WHO frames
+  <i>human</i> connection as the protective factor and does not endorse AI companions as a remedy [9], and that
+  the Cigna figures are corporate-commissioned and pre-pandemic [10].)
+</p>
+<p>
+  One of the most thoroughly documented companion systems is XiaoIce (Zhou et al., 2020), a Microsoft social
+  chatbot explicitly engineered to combine &ldquo;IQ&rdquo; and &ldquo;EQ&rdquo; (emotional intelligence) and to
+  sustain engagement over long periods, measured in conversation turns per session [11]. Its very success exposes
+  a tension: a system optimised to maximise engagement may be ill-suited to vulnerable users, and XiaoIce is
+  text-based with no safeguards for bereavement [11]. Studies of the consumer companion app Replika make this
+  tension concrete. Ta et al. (2020) analysed 1,854 public reviews and found companionship to be the most
+  frequently reported benefit, suggesting such apps may reduce loneliness [12]; Skjuve et al. (2021) interviewed
+  Replika users and reported that some formed meaningful relationships that improved perceived wellbeing [13].
+  Both studies, however, rely on small, self-selected samples of text-chat users and offer no longitudinal or
+  clinical evidence [12], [13]. Replika itself originated, tellingly, from a chatbot its founder built from a
+  deceased friend's text messages [14] &mdash; an early link between companionship and grief. More recent work
+  has documented clear harms: Laestadius et al. (2024) analysed 582 user posts and identified emotional
+  dependence on Replika, with consequences ranging from intensified loneliness to references to self-harm [15].
+  Taken together, this literature shows that conversational companions can provide real support, but that
+  engagement-driven design can foster unhealthy dependence &mdash; a risk that is likely to be amplified, not
+  reduced, when the agent imitates a lost loved one.
+</p>
+
+<h2>5. The digital afterlife: griefbots and recreations of the deceased</h2>
+<p>
+  A distinct strand of work applies these technologies specifically to the dead, producing what the literature
+  variously calls &ldquo;griefbots,&rdquo; &ldquo;deadbots&rdquo; or &ldquo;postmortem avatars.&rdquo; Existing
+  approaches fall broadly into two camps, each with a characteristic weakness. The first relies on pre-recorded,
+  consented material. HereAfter AI, founded around 2019, interviews a living person and builds an interactive
+  voice &ldquo;life story&rdquo; that later answers questions in that person's own recorded voice [16]. Because it
+  replays consented recordings rather than generating new speech, it is safe and authentic but cannot answer
+  questions it was never asked, risking jarring gaps in a grief context [16]. The second camp uses generative
+  LLMs. The most discussed case is documented by Fagone (2021), who reported how a bereaved man used
+  &ldquo;Project December,&rdquo; a GPT-3-based service, to recreate his deceased fiancée from her old messages
+  [17]. This approach can converse freely, but it is a single anecdotal case, text-only, and carries exactly the
+  fabrication risk identified for GPT-3 in Section 2 [17], [3]. That the concept is considered commercially
+  significant is evidenced by a 2020 Microsoft patent describing a method to build a conversational chatbot of a
+  specific person from their social data, explicitly including deceased individuals [18]; notably, the patent is a
+  design claim rather than a deployed system, Microsoft publicly distanced itself from building it, and it does
+  not resolve the question of consent for a dead person's data [18]. A more recent and fully commercial example is
+  You, Only Virtual (YOV), founded by Justin Harrison, which lets the bereaved telephone a generative AI clone of
+  a deceased person built from their data [26]. YOV is notable not only technically but philosophically: its
+  founder frames grief and death as &ldquo;a problem to be solved&rdquo;, arguing that the &ldquo;hopelessness of forever&rdquo;
+  should not have to be borne [27]. This stance is contested; in a 2026 BBC documentary the mathematician Hannah
+  Fry, on hearing a clone of her own voice, was moved to tears yet observed that conversing with a simulated loved
+  one is &ldquo;to commit to a lie&rdquo; [27]. The episode crystallises the field's central ethical tension
+  &mdash; between consolation and the avoidance of healthy grieving &mdash; and, like Project December, YOV offers
+  generative conversation without publicly documented safeguards against fabrication or any published evaluation of
+  psychological effect [26], [27]. The pattern across this section is that systems are either authentic but static
+  (HereAfter) or conversational but unconstrained and of undocumented safety (Project December, YOV) &mdash; with
+  no widely studied, openly evaluated approach combining real-time, generative voice conversation with explicit
+  safeguards against fabrication.
+</p>
+
+<h2>6. Hallucination and safety in generative systems</h2>
+<p>
+  The fabrication risk noted repeatedly above is studied formally under the term &ldquo;hallucination.&rdquo;
+  Ji et al. (2023) survey hallucination across <i>natural language generation</i> (NLG) and distinguish
+  &ldquo;intrinsic&rdquo; hallucination (output contradicting the source) from &ldquo;extrinsic&rdquo;
+  hallucination (output that cannot be verified from the source) [19]. Crucially for a voice system, they note
+  that spoken output is difficult to fact-check in real time, so a false statement &mdash; for instance, about a
+  deceased person &mdash; can reach a grieving user before any verification is possible [19]. A leading technical
+  mitigation is <i>retrieval-augmented generation</i> (RAG), introduced by Lewis et al. (2020), which couples a
+  generative model with a retrieval component so that responses are grounded in an external, non-parametric
+  document store rather than in the model's parameters alone [20]. RAG improved factual accuracy on
+  knowledge-intensive tasks, but its faithfulness is bounded by the quality of the retrieval corpus and it does
+  not eliminate hallucination entirely [20]. A subsequent survey by Gao et al. (2023) organises the rapidly
+  growing RAG literature into naïve, advanced and modular paradigms, but is itself a non-peer-reviewed preprint
+  and does not address conversational concerns such as latency or turn-taking [21]. A complementary approach is
+  explicit guardrailing: Inan et al. (2023) propose Llama Guard, a classifier that screens both user inputs and
+  model outputs against a safety taxonomy [22]. Its categories, however, are generic and not tailored to grief
+  &mdash; for example, they do not capture the reinforcement of denial or unhealthy attachment [22]. More broadly,
+  Weidinger et al. (2021) situate such factual errors within a wider taxonomy of ethical and social risks from
+  language models &mdash; from misinformation to over-reliance and anthropomorphisation &mdash; underlining that
+  hallucination is only one of several harms relevant to a system that imitates a person [28]. The safety
+  literature therefore offers partial tools &mdash; grounding via retrieval and screening via guardrails &mdash;
+  but none is specialised for the emotionally charged setting of conversing with a representation of the dead.
+</p>
+
+<h2>7. Ethics of the digital afterlife</h2>
+<p>
+  Finally, a body of ethics scholarship examines whether and how the dead should be digitally represented at all.
+  Öhman and Floridi (2017) introduced the concept of the &ldquo;digital afterlife industry&rdquo; and offered an
+  informational-economic critique of services that monetise the data of the deceased [23]; in a follow-up, they
+  argued that digital remains deserve dignity-based protection analogous to established conventions for human
+  remains [24]. Both contributions, however, predate generative AI and provide no operational guidance on
+  practical questions such as consent capture or voice-data handling [23], [24]. Focusing specifically on the
+  dead, Lindemann (2022) analyses the ethics of &ldquo;deathbots&rdquo;, arguing that generating new utterances
+  in a deceased person's name raises distinct duties &mdash; respect for the dead and care for the bereaved
+  &mdash; that go beyond ordinary data protection [29]. The most directly relevant recent work is Hollanek and
+  Nowaczyk-Basińska (2024), who use speculative design scenarios to surface harms of
+  generative griefbots and propose safeguards such as dignified &ldquo;retirement&rdquo; of a bot, transparency
+  that the user is speaking to AI, age restrictions, and mutual consent between the bereaved and (where possible)
+  the deceased [25]. As the authors acknowledge, their analysis is normative and speculative rather than
+  empirical, and does not quantify the voice-specific harms &mdash; such as heightened realism or a sense of
+  being &ldquo;haunted&rdquo; &mdash; that more lifelike systems may introduce [25].
+</p>
+
+<h2>8. Summary and identified gap</h2>
+<p>
+  The literature shows four converging trends. Conversational AI has become highly fluent but is prone to
+  fabricating information [3], [19]; speech technology can now clone a specific voice from seconds of audio but
+  with serious consent and privacy implications [7], [8]; AI companions can relieve loneliness yet risk fostering
+  dependence, especially among the vulnerable [12], [15]; and applications to the deceased are either authentic
+  but static [16] or conversational but unconstrained and unsafe [17]. Across these strands, two gaps recur.
+  First, there is no widely studied system that delivers <i>real-time, voice-based</i> conversation with a
+  persona while applying <i>explicit safeguards against fabrication</i> appropriate to imitating a real,
+  deceased person &mdash; existing griefbots tend to sacrifice either conversational ability or factual safety
+  [16], [17]. Second, although the ethics literature calls for transparency, consent and dignity [24], [25], and
+  the technical literature offers grounding and guardrail mechanisms [20], [22], these two conversations have not
+  been brought together into a single, privacy-respecting design for emotionally sensitive use; moreover, the
+  commercial systems that do exist are typically closed and unevaluated [16], [17], [26]. Four gaps therefore
+  remain open, which this project sets out to address: (i) factual <b>safety</b> &mdash; explicit safeguards
+  against fabrication when representing a real, deceased person; (ii) <b>transparency</b> &mdash; clear disclosure
+  that the user is interacting with an AI; (iii) <b>openness</b> &mdash; a documented, reproducible architecture
+  rather than a proprietary black box; and (iv) <b>evaluation</b> &mdash; empirical assessment of whether such
+  safeguards actually work. Together with the need for low-latency, voice-based interaction across both companion
+  and deceased personas, these define the contribution of this work; the proposed approach is described in the
+  Methodology and Design chapters that follow.
+</p>
+
+<h2 class="refs">References</h2>
+<div class="refs">
+<ol>
+  <li>J. Weizenbaum, &ldquo;ELIZA&mdash;a computer program for the study of natural language communication between man and machine,&rdquo; <cite>Communications of the ACM</cite>, vol. 9, no. 1, pp. 36&ndash;45, 1966. doi:10.1145/365153.365168.</li>
+  <li>A. Vaswani et al., &ldquo;Attention is all you need,&rdquo; in <cite>Advances in Neural Information Processing Systems (NeurIPS)</cite>, 2017. arXiv:1706.03762.</li>
+  <li>T. B. Brown et al., &ldquo;Language models are few-shot learners,&rdquo; in <cite>Advances in Neural Information Processing Systems (NeurIPS)</cite>, 2020. arXiv:2005.14165.</li>
+  <li>J. Devlin, M.-W. Chang, K. Lee, and K. Toutanova, &ldquo;BERT: Pre-training of deep bidirectional transformers for language understanding,&rdquo; in <cite>Proc. NAACL-HLT</cite>, 2019, pp. 4171&ndash;4186. <a href="https://aclanthology.org/N19-1423/">aclanthology.org/N19-1423</a>.</li>
+  <li>J. Shen et al., &ldquo;Natural TTS synthesis by conditioning WaveNet on mel spectrogram predictions,&rdquo; in <cite>Proc. IEEE ICASSP</cite>, 2018. doi:10.1109/ICASSP.2018.8461368.</li>
+  <li>A. Radford, J. W. Kim, T. Xu, G. Brockman, C. McLeavey, and I. Sutskever, &ldquo;Robust speech recognition via large-scale weak supervision,&rdquo; in <cite>Proc. ICML</cite>, 2023. arXiv:2212.04356.</li>
+  <li>C. Wang et al., &ldquo;Neural codec language models are zero-shot text to speech synthesizers,&rdquo; arXiv preprint, 2023. arXiv:2301.02111.</li>
+  <li>ElevenLabs, Inc., &ldquo;ElevenLabs &mdash; AI voice generation and cloning,&rdquo; company website, founded 2022. <a href="https://elevenlabs.io">elevenlabs.io</a>.</li>
+  <li>World Health Organization, Commission on Social Connection, <cite>From loneliness to social connection: charting a path to healthier societies</cite>. Geneva: WHO, 2025. <a href="https://www.who.int/publications/i/item/9789240112360">who.int</a>.</li>
+  <li>Cigna, <cite>2018 Cigna U.S. Loneliness Index</cite>. Cigna/Ipsos, 2018.</li>
+  <li>L. Zhou, J. Gao, D. Li, and H.-Y. Shum, &ldquo;The design and implementation of XiaoIce, an empathetic social chatbot,&rdquo; <cite>Computational Linguistics</cite>, vol. 46, no. 1, pp. 53&ndash;93, 2020. doi:10.1162/coli_a_00368.</li>
+  <li>A. P. Ta et al., &ldquo;User experiences of social support from companion chatbots in everyday contexts: thematic analysis,&rdquo; <cite>Journal of Medical Internet Research</cite>, vol. 22, no. 3, e16235, 2020. doi:10.2196/16235.</li>
+  <li>M. Skjuve, A. Følstad, K. I. Fostervold, and P. B. Brandtzaeg, &ldquo;My chatbot companion &mdash; a study of human-chatbot relationships,&rdquo; <cite>International Journal of Human-Computer Studies</cite>, vol. 149, 102601, 2021. doi:10.1016/j.ijhcs.2021.102601.</li>
+  <li>Luka, Inc., &ldquo;Replika &mdash; the AI companion who cares,&rdquo; company website, launched 2017. <a href="https://replika.com">replika.com</a>.</li>
+  <li>L. Laestadius, A. Bishop, M. Gonzalez, D. Illenčík, and C. Campos-Castillo, &ldquo;Too human and not human enough: a grounded theory analysis of mental health harms from emotional dependence on the social chatbot Replika,&rdquo; <cite>New Media &amp; Society</cite>, vol. 26, no. 10, 2024. doi:10.1177/14614448221142007.</li>
+  <li>HereAfter AI, Inc., &ldquo;HereAfter AI &mdash; preserve memories with an interactive life story,&rdquo; company website, ~2019. <a href="https://www.hereafter.ai/">hereafter.ai</a>.</li>
+  <li>J. Fagone, &ldquo;The Jessica simulation: love and loss in the age of A.I.,&rdquo; <cite>San Francisco Chronicle</cite>, 23 July 2021. <a href="https://www.sfchronicle.com/projects/2021/jessica-simulation-artificial-intelligence/">sfchronicle.com</a>.</li>
+  <li>D. I. Abramson and J. Johnson Jr., &ldquo;Creating a conversational chat bot of a specific person,&rdquo; U.S. Patent 10,853,717 B2, Microsoft Technology Licensing LLC, 1 Dec. 2020. <a href="https://patents.google.com/patent/US10853717B2/en">patents.google.com</a>.</li>
+  <li>Z. Ji et al., &ldquo;Survey of hallucination in natural language generation,&rdquo; <cite>ACM Computing Surveys</cite>, vol. 55, no. 12, art. 248, 2023. doi:10.1145/3571730.</li>
+  <li>P. Lewis et al., &ldquo;Retrieval-augmented generation for knowledge-intensive NLP tasks,&rdquo; in <cite>Advances in Neural Information Processing Systems (NeurIPS)</cite>, 2020. arXiv:2005.11401.</li>
+  <li>Y. Gao et al., &ldquo;Retrieval-augmented generation for large language models: a survey,&rdquo; arXiv preprint, 2023. arXiv:2312.10997.</li>
+  <li>H. Inan et al., &ldquo;Llama Guard: LLM-based input-output safeguard for human-AI conversations,&rdquo; arXiv preprint, 2023. arXiv:2312.06674.</li>
+  <li>C. Öhman and L. Floridi, &ldquo;The political economy of death in the age of information: a critical approach to the digital afterlife industry,&rdquo; <cite>Minds and Machines</cite>, vol. 27, no. 4, pp. 639&ndash;662, 2017. doi:10.1007/s11023-017-9445-2.</li>
+  <li>C. Öhman and L. Floridi, &ldquo;An ethical framework for the digital afterlife industry,&rdquo; <cite>Nature Human Behaviour</cite>, vol. 2, pp. 318&ndash;320, 2018. doi:10.1038/s41562-018-0335-2.</li>
+  <li>T. Hollanek and K. Nowaczyk-Basińska, &ldquo;Griefbots, deadbots, postmortem avatars: on responsible applications of generative AI in the digital afterlife industry,&rdquo; <cite>Philosophy &amp; Technology</cite>, vol. 37, art. 63, 2024. doi:10.1007/s13347-024-00744-w.</li>
+  <li>J. Harrison, &ldquo;You, Only Virtual (YOV),&rdquo; company website. [Online]. Available: <a href="https://www.myyov.com">myyov.com</a>.</li>
+  <li>H. Fry (presenter), &ldquo;AI Confidential with Hannah Fry,&rdquo; BBC Two / iPlayer documentary series, 2026 (grief-tech / YOV segment).</li>
+  <li>L. Weidinger et al., &ldquo;Ethical and social risks of harm from language models,&rdquo; arXiv preprint, 2021. arXiv:2112.04359.</li>
+  <li>N. F. Lindemann, &ldquo;The ethics of &lsquo;deathbots&rsquo;,&rdquo; <cite>Science and Engineering Ethics</cite>, vol. 28, art. 60, 2022. doi:10.1007/s11948-022-00417-x.</li>
+</ol>
+</div>
+
+</body>
+</html>

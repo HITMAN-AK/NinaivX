@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>NinaivX vs You, Only Virtual — Feature Comparison</title>
+<style>
+  @page { size: A4; margin: 16mm 14mm; }
+  * { box-sizing: border-box; }
+  body { font-family:"Segoe UI",Arial,sans-serif; color:#1f2937; font-size:10pt; line-height:1.45; }
+  h1 { font-size:17pt; color:#4338ca; text-align:center; margin-bottom:2px; }
+  .meta { text-align:center; font-size:9.5pt; color:#6b7280; margin-bottom:12px; }
+  h2 { font-size:12pt; margin:16px 0 6px; color:#4338ca; border-bottom:1px solid #ccc; padding-bottom:3px; }
+  p { margin:0 0 9px; }
+  table { border-collapse:collapse; width:100%; margin:0 0 8px; }
+  th,td { border:1px solid #d1d5db; padding:5px 7px; vertical-align:top; text-align:left; }
+  th { background:#eef2ff; font-size:9pt; }
+  td.c { text-align:center; font-weight:700; white-space:nowrap; width:120px; }
+  .yes { color:#059669; } .no { color:#b91c1c; } .part { color:#b45309; } .plan { color:#1d4ed8; } .unk { color:#6b7280; }
+  .legend { font-size:9pt; background:#f8f8fb; border:1px solid #e3e3ea; border-radius:6px; padding:8px 12px; margin:8px 0 12px; }
+  .phil { background:#f5f3ff; border:1px solid #ddd6fe; border-radius:6px; padding:10px 12px; margin:10px 0; font-size:9.7pt; }
+  .src { font-size:8.3pt; color:#666; }
+  .take { background:#ecfdf5; border:1px solid #a7f3d0; border-radius:6px; padding:9px 12px; font-size:9.7pt; margin:10px 0; }
+</style>
+</head>
+<body>
+
+<h1>NinaivX vs You, Only Virtual (YOV) — Feature Comparison</h1>
+<div class="meta">Ashwin Kumar Ramesh Kumar · MSc Artificial Intelligence, University of Sheffield</div>
+
+<p style="font-size:9.5pt">
+  This comparison is based on YOV's public materials (company website myyov.com, press releases, news coverage,
+  and the BBC documentary <i>AI Confidential with Hannah Fry</i>, 2026), verified June 2026. Where YOV does not
+  publicly document a feature, it is marked <b>&ldquo;not documented&rdquo;</b> rather than &ldquo;absent&rdquo;,
+  because absence of documentation is not proof of absence.
+</p>
+
+<div class="legend">
+  <b>Key:</b> <span class="yes">✓ has it</span> · <span class="part">◑ partial/basic</span> ·
+  <span class="plan">⧖ planned</span> · <span class="no">✗ not offered</span> ·
+  <span class="unk">? not publicly documented</span>
+</div>
+
+<h2>A. Features both systems share (stated honestly)</h2>
+<table>
+  <tr><th>Feature</th><th class="c">YOV</th><th class="c">NinaivX</th></tr>
+  <tr><td>Voice cloning of a person's voice</td><td class="c yes">✓</td><td class="c yes">✓</td></tr>
+  <tr><td>Generative, dynamic conversation (not just recordings)</td><td class="c yes">✓</td><td class="c yes">✓</td></tr>
+  <tr><td>Phone-call-style voice interface</td><td class="c yes">✓</td><td class="c yes">✓</td></tr>
+  <tr><td>Text and voice messaging</td><td class="c yes">✓</td><td class="c yes">✓</td></tr>
+  <tr><td>Persona built from the person's own data</td><td class="c yes">✓</td><td class="c yes">✓</td></tr>
+  <tr><td>Conversation memory across sessions</td><td class="c yes">✓</td><td class="c yes">✓</td></tr>
+</table>
+
+<h2>B. Features NinaivX has that YOV lacks or does not document</h2>
+<table>
+  <tr><th>Feature</th><th class="c">YOV</th><th class="c">NinaivX</th><th>Note</th></tr>
+  <tr><td>Living <b>companion</b> mode for loneliness (a friend, not grief)</td><td class="c no">✗</td><td class="c yes">✓</td><td>YOV's scope is the deceased / legacy use case only; it markets no general companion.</td></tr>
+  <tr><td><b>Air-gapped safety mode</b> (deceased persona cut off from the internet)</td><td class="c unk">?</td><td class="c yes">✓</td><td>NinaivX enforces this in code (the deceased agent has no tools); YOV does not document such a mechanism.</td></tr>
+  <tr><td><b>Web-connected mode</b> for current information</td><td class="c no">✗</td><td class="c yes">✓</td><td>The NinaivX companion can search the live web; YOV has no companion mode.</td></tr>
+  <tr><td><b>Anti-fabrication grounding</b> (persona limited to stored personality + memory)</td><td class="c unk">?</td><td class="c part">◑</td><td>Reduces invented &ldquo;memories&rdquo;; basic in NinaivX, not documented by YOV.</td></tr>
+  <tr><td><b>AI-transparency disclosure</b> to the user</td><td class="c unk">?</td><td class="c yes">✓</td><td>NinaivX implements this: the persona honestly confirms it is an AI if asked, and a disclosure notice is provided via the API for onboarding + an in-app indicator. YOV is designed to feel like the real person, with no documented disclosure.</td></tr>
+  <tr><td><b>Open, documented, reproducible</b> architecture</td><td class="c no">✗</td><td class="c yes">✓</td><td>YOV is &ldquo;fully patented&rdquo;, proprietary and closed; NinaivX is an open research artefact.</td></tr>
+  <tr><td><b>Non-commercial</b> (free research prototype)</td><td class="c no">✗</td><td class="c yes">✓</td><td>YOV is paid (~$499 setup + ~$39.99/month).</td></tr>
+  <tr><td><b>Privacy / data-sovereignty</b> stance (UK / GDPR)</td><td class="c unk">?</td><td class="c part">◑</td><td>NinaivX is designed privacy-first (UK intent); YOV is US-based (Azure/Google Cloud) with no documented UK/GDPR stance.</td></tr>
+</table>
+
+<div class="phil">
+  <b>Underlying philosophy (the deepest difference).</b> YOV's founder treats
+  <i>&ldquo;grief and death itself as a problem to be solved&rdquo;</i> — the goal is to keep talking to the
+  person. NinaivX takes the opposite, evidence-informed stance: it is a <b>grief-support and closure tool</b> that
+  aims to help people mourn healthily, not a permanent replacement. This directly engages the ethical debate raised
+  in the BBC documentary — whether grief is a necessary human process.
+</div>
+
+<div class="take">
+  <b>Key takeaway for the viva:</b> &ldquo;YOV and NinaivX share the core voice features, so I don't claim to be
+  first. What YOV does not offer or document is a <b>safety design that stops the AI fabricating things the real
+  person never said</b>, <b>transparency that it's an AI</b>, an <b>open architecture</b>, and a <b>companion
+  mode</b> — and, unlike a closed commercial product, I <b>evaluate</b> whether my safety measures actually work.&rdquo;
+</div>
+
+<p class="src">
+  Sources (verified June 2026): myyov.com (incl. /about, /welcome-to-yov); Irish Times coverage of BBC
+  &ldquo;AI Confidential with Hannah Fry&rdquo; (Feb 2026); Inverse (2022); PRWeb (YOV press releases); Forbes
+  Africa, &ldquo;The rise of grieftech&rdquo; (2024); StartEngine offering page. Items marked &ldquo;?&rdquo; are
+  genuine gaps in YOV's public documentation and are reported as such, not asserted as missing.
+</p>
+
+</body>
+</html>
