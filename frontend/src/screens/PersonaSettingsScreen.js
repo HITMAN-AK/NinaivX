@@ -30,6 +30,7 @@ export default function PersonaSettingsScreen({ persona, onBack, onDeleted, onSa
   const [nickname, setNickname] = useState('');
   const [personality, setPersonality] = useState('');
   const [language, setLanguage] = useState('English');
+  const [yearPassed, setYearPassed] = useState('');
   const [voiceId, setVoiceId] = useState(null);
 
   // clone state (upload only)
@@ -44,6 +45,7 @@ export default function PersonaSettingsScreen({ persona, onBack, onDeleted, onSa
         setRelationship(p.relationship_with_user || ''); setPersonality(p.personality_text || '');
         setNickname(p.user_nickname || '');
         setLanguage(p.language || 'English');
+        setYearPassed(String(p.year_of_passing ?? ''));
         setVoiceId(p.elevenlabs_voice_id || null);
       } catch (e) { Alert.alert('Could not load persona', e.message); }
       finally { setLoading(false); }
@@ -51,12 +53,18 @@ export default function PersonaSettingsScreen({ persona, onBack, onDeleted, onSa
   }, [token, persona.id]);
 
   async function save() {
+    const yearNum = yearPassed.trim() ? parseInt(yearPassed, 10) : null;
+    if (isLegacy && yearPassed.trim() && (!Number.isInteger(yearNum) || yearNum < 1900 || yearNum > 2100)) {
+      Alert.alert('Invalid year', 'Please enter a valid year they passed (1900–2100), or leave it blank.');
+      return;
+    }
     setSaving(true);
     try {
       await api.updatePersona(token, persona.id, {
         name: name.trim(), age: parseInt(age, 10) || 30, gender: gender.trim(),
         relationship_with_user: relationship.trim(), personality_text: personality.trim(),
         language, user_nickname: nickname.trim() || null,
+        ...(isLegacy ? { year_of_passing: yearNum } : {}),
       });
       onSaved && onSaved();
       Alert.alert('Saved', 'Persona updated.');
@@ -154,6 +162,16 @@ export default function PersonaSettingsScreen({ persona, onBack, onDeleted, onSa
             style={{ marginBottom: theme.space(2) }}
           />
           <Caption>Record their personality &amp; memories — review, edit, or record again.</Caption>
+
+          {isLegacy && (
+            <View style={{ marginTop: theme.space(4) }}>
+              <Field label="Year they passed" value={yearPassed} onChangeText={setYearPassed}
+                placeholder="e.g. 2015" keyboardType="number-pad" />
+              <Caption style={{ marginTop: -theme.space(2) }}>
+                Keeps them true to their time — they won't know about events after this year.
+              </Caption>
+            </View>
+          )}
 
           <GradientButton title="Save changes" colors={grad} onPress={save} loading={saving} style={{ marginTop: theme.space(4) }} />
 

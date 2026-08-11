@@ -41,7 +41,8 @@ def deceased_agent_node(state: AgentState):
             personality_text=persona.personality_text,
             cause_of_death=persona.cause_of_death,
             current_summary=current_summary,
-            user_nickname=persona.user_nickname
+            user_nickname=persona.user_nickname,
+            year_of_passing=persona.year_of_passing
         )
     finally:
         db.close()

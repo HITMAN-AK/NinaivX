@@ -25,6 +25,7 @@ export default function CreatePersonaScreen({ onDone, onCancel }) {
   const [nickname, setNickname] = useState('');
   const [personality, setPersonality] = useState('');
   const [cause, setCause] = useState('');
+  const [yearPassed, setYearPassed] = useState('');
   const [language, setLanguage] = useState('English');
   const [voiceAsset, setVoiceAsset] = useState(null); // uploaded recording to clone
   const [voiceRightsOk, setVoiceRightsOk] = useState(false); // consent: right to use the recording
@@ -59,6 +60,10 @@ export default function CreatePersonaScreen({ onDone, onCancel }) {
     if (!language.trim()) missing.push('a language');
     if (!pickedVoiceId && !voiceAsset) missing.push('a voice (pick one or upload a recording to clone)');
     if (voiceAsset && !voiceRightsOk) missing.push('confirmation that you have the right to use the uploaded voice');
+    const yearNum = yearPassed.trim() ? parseInt(yearPassed, 10) : null;
+    if (isLegacy && yearPassed.trim() && (!Number.isInteger(yearNum) || yearNum < 1900 || yearNum > 2100)) {
+      missing.push('a valid year they passed (1900–2100), or leave it blank');
+    }
     if (missing.length) {
       Alert.alert('Please complete the form', 'Still needed: ' + missing.join(', ') + '.');
       return;
@@ -85,6 +90,7 @@ export default function CreatePersonaScreen({ onDone, onCancel }) {
         relationship_with_user: relationship.trim(),
         personality_text: personality.trim(),
         cause_of_death: isLegacy ? (cause.trim() || null) : null,
+        year_of_passing: isLegacy ? yearNum : null,
         language: language.trim(),
         user_nickname: nickname.trim() || null,
         elevenlabs_voice_id: voiceId,
@@ -153,7 +159,19 @@ export default function CreatePersonaScreen({ onDone, onCancel }) {
             <Caption>Record their personality &amp; memories — you can review, edit, or record again.</Caption>
 
             {isLegacy && (
-              <Field label="How they passed (optional)" value={cause} onChangeText={setCause} placeholder="e.g. peacefully, old age" />
+              <View style={{ flexDirection: 'row', gap: theme.space(3) }}>
+                <View style={{ flex: 1.4 }}>
+                  <Field label="How they passed (optional)" value={cause} onChangeText={setCause} placeholder="e.g. peacefully, old age" />
+                </View>
+                <View style={{ flex: 1 }}>
+                  <Field label="Year they passed" value={yearPassed} onChangeText={setYearPassed} placeholder="e.g. 2015" keyboardType="number-pad" />
+                </View>
+              </View>
+            )}
+            {isLegacy && (
+              <Caption style={{ marginTop: -theme.space(1), marginBottom: theme.space(2) }}>
+                The year helps keep them true to their time — they won't know about events after it.
+              </Caption>
             )}
 
             <Text style={styles.voiceLabel}>Voice (required)</Text>

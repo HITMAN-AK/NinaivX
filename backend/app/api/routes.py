@@ -109,6 +109,7 @@ class PersonaCreate(BaseModel):
     personality_text: str
     elevenlabs_voice_id: str          # required: a voice must be chosen before creating a persona
     cause_of_death: str | None = None
+    year_of_passing: int | None = None  # legacy only: temporally grounds the persona's knowledge
     language: str | None = None       # e.g. "English", "Tamil"; falls back to the user's
     user_nickname: str | None = None  # what the persona calls the user (e.g. "beta")
 
@@ -141,15 +142,24 @@ class PersonaCreate(BaseModel):
         v = (v or "").strip()
         return v or None
 
+    @field_validator("year_of_passing")
+    @classmethod
+    def _year_ok(cls, v: int | None) -> int | None:
+        if v is not None and (v < 1900 or v > 2100):
+            raise ValueError("Year of passing must be a valid year (1900-2100).")
+        return v
+
     @model_validator(mode="after")
     def _type_specific_rules(self):
         if self.persona_type == PersonaType.COMPANION:
             # A companion is a living adult friend — must be 18+.
             if self.age < MIN_SIGNUP_AGE:
                 raise ValueError(f"A companion persona must be an adult ({MIN_SIGNUP_AGE} or over).")
-            # Cause of death only applies to a legacy (deceased) persona.
+            # Cause of death / year of passing only apply to a legacy (deceased) persona.
             if self.cause_of_death:
                 raise ValueError("Cause of death only applies to a legacy (deceased) persona.")
+            if self.year_of_passing:
+                raise ValueError("Year of passing only applies to a legacy (deceased) persona.")
         # Legacy (deceased) personas may be any age (a lost child, etc.), so no lower age bound.
         return self
 
@@ -161,9 +171,17 @@ class PersonaUpdate(BaseModel):
     relationship_with_user: str | None = None
     personality_text: str | None = None
     cause_of_death: str | None = None
+    year_of_passing: int | None = None
     elevenlabs_voice_id: str | None = None
     language: str | None = None
     user_nickname: str | None = None
+
+    @field_validator("year_of_passing")
+    @classmethod
+    def _year_ok(cls, v):
+        if v is not None and (v < 1900 or v > 2100):
+            raise ValueError("Year of passing must be a valid year (1900-2100).")
+        return v
 
     @field_validator("name", "gender", "relationship_with_user", "elevenlabs_voice_id")
     @classmethod
@@ -318,6 +336,7 @@ def create_persona(body: PersonaCreate, user: User = Depends(get_current_user), 
         relationship_with_user=body.relationship_with_user,
         personality_text=body.personality_text,
         cause_of_death=body.cause_of_death,
+        year_of_passing=body.year_of_passing,
         elevenlabs_voice_id=body.elevenlabs_voice_id,
         language=body.language,
         user_nickname=body.user_nickname,
@@ -351,6 +370,7 @@ def _persona_dict(p: Persona) -> dict:
         "relationship_with_user": p.relationship_with_user,
         "personality_text": p.personality_text,
         "cause_of_death": p.cause_of_death,
+        "year_of_passing": p.year_of_passing,
         "elevenlabs_voice_id": p.elevenlabs_voice_id,
         "language": p.language,
         "user_nickname": p.user_nickname,

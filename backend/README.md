@@ -136,6 +136,7 @@ never given the tool.
 
 ### Content safety (by mode)
 - **Legacy (deceased)** — a legacy persona may represent a person of **any age, including a child**, so its prompt enforces an **absolute, non-negotiable safety rule**: it will **never** produce sexual, romantic or adult/explicit content, and firmly declines and redirects any attempt to steer it there. Its only purpose is comfort, remembrance and closure.
+  - **Temporal grounding:** an optional **`year_of_passing`** constrains the persona's knowledge to their lifetime. The air-gap blocks *live* internet, but the model's built-in training knowledge still spans up to its cutoff (~2024–2025); without a death year the persona could wrongly reference **post-death** events (e.g. a 2020 event for someone who died in 2015). With the year set, the prompt tells it *"your knowledge stops at {year}; if asked about anything after, say you weren't around for it — never guess."*
 - **Companion** — a companion is always an **adult (18+)** talking with an adult user, so it may engage **maturely with 18+ themes** when the user leads, while still refusing anything illegal, involving minors, or promoting serious harm.
 
 ### Memory
@@ -161,6 +162,7 @@ Persona
   name, age, gender, relationship_with_user
   personality_text        = who they are (used to build the prompt)
   cause_of_death          = deceased only
+  year_of_passing         = deceased only — grounds the persona to their lifetime (no post-death knowledge)
   language                = this persona's conversation language (falls back to the user's)
   user_nickname           = what the persona calls the user (e.g. "beta"; falls back to the user's name)
   elevenlabs_voice_id     = the cloned/selected voice for TTS

@@ -28,7 +28,10 @@ class Persona(Base):
     personality_text = Column(Text, nullable=False) 
     
     # Specific to DECEASED personas
-    cause_of_death = Column(String, nullable=True) 
+    cause_of_death = Column(String, nullable=True)
+    # The year the person passed away. Used to temporally ground the legacy persona:
+    # it only "knows" the world up to this year (no post-death events, no live news).
+    year_of_passing = Column(Integer, nullable=True)
 
     # Conversation language for THIS persona (e.g. "English", "Tamil").
     # Falls back to the owner's language if not set.
