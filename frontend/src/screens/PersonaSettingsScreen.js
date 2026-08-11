@@ -12,7 +12,7 @@ import { LANGUAGES, codeForLanguage } from '../constants';
 import VoiceInputButton from '../VoiceInputButton';
 import SyntheticVoiceButtons from '../SyntheticVoiceButtons';
 import VoicePicker from '../VoicePicker';
-import { Screen, H1, H2, P, Caption, Field, GradientButton, GhostButton, Card, Pill, Checkbox } from '../ui';
+import { Screen, ScreenHeader, H1, H2, P, Caption, Field, GradientButton, GhostButton, Card, Pill, Checkbox } from '../ui';
 
 const c = theme.colors;
 
@@ -115,11 +115,9 @@ export default function PersonaSettingsScreen({ persona, onBack, onDeleted, onSa
 
   return (
     <Screen>
+      <ScreenHeader title="Persona settings" onBack={onBack} accent={isLegacy ? c.legacy : c.companion} />
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1 }}>
-        <ScrollView contentContainerStyle={{ paddingTop: theme.space(14), paddingBottom: theme.space(20) }} keyboardShouldPersistTaps="handled">
-          <View style={styles.top}>
-            <TouchableOpacity onPress={onBack}><Text style={styles.back}>‹ Back</Text></TouchableOpacity>
-          </View>
+        <ScrollView contentContainerStyle={{ paddingTop: theme.space(4), paddingBottom: theme.space(20) }} keyboardShouldPersistTaps="handled">
           <H1>{persona.name}</H1>
           <Pill color={isLegacy ? c.legacy : c.companion}>{isLegacy ? '🕊  Legacy · offline' : '💬  Companion · online'}</Pill>
 

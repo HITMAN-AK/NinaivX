@@ -11,7 +11,7 @@ import { LANGUAGES, codeForLanguage } from '../constants';
 import VoiceInputButton from '../VoiceInputButton';
 import SyntheticVoiceButtons from '../SyntheticVoiceButtons';
 import VoicePicker from '../VoicePicker';
-import { Screen, H1, P, Caption, Field, GradientButton, GhostButton, Checkbox } from '../ui';
+import { Screen, ScreenHeader, P, Caption, Field, GradientButton, GhostButton, Checkbox } from '../ui';
 
 const c = theme.colors;
 
@@ -99,9 +99,9 @@ export default function CreatePersonaScreen({ onDone, onCancel }) {
 
   return (
     <Screen>
+      <ScreenHeader title="New persona" onCancel={onCancel} accent={isLegacy ? c.legacy : c.companion} />
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1 }}>
-        <ScrollView contentContainerStyle={{ paddingTop: theme.space(14), paddingBottom: theme.space(20) }} keyboardShouldPersistTaps="handled">
-          <H1>New persona</H1>
+        <ScrollView contentContainerStyle={{ paddingTop: theme.space(4), paddingBottom: theme.space(20) }} keyboardShouldPersistTaps="handled">
           <P dim style={{ marginTop: 4 }}>Choose who you'd like to talk with.</P>
 
           <View style={styles.typeRow}>

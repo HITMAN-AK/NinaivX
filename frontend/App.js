@@ -9,6 +9,7 @@ import CreatePersonaScreen from './src/screens/CreatePersonaScreen';
 import ChatScreen from './src/screens/ChatScreen';
 import VoiceScreen from './src/screens/VoiceScreen';
 import PersonaSettingsScreen from './src/screens/PersonaSettingsScreen';
+import SwipeBack from './src/SwipeBack';
 
 function Root() {
   const { token } = useAuth();
@@ -22,29 +23,41 @@ function Root() {
 
   if (screen === 'create') {
     return (
-      <CreatePersonaScreen
-        onDone={() => { setListKey((k) => k + 1); setScreen('list'); }}
-        onCancel={() => setScreen('list')}
-      />
+      <SwipeBack onBack={() => setScreen('list')}>
+        <CreatePersonaScreen
+          onDone={() => { setListKey((k) => k + 1); setScreen('list'); }}
+          onCancel={() => setScreen('list')}
+        />
+      </SwipeBack>
     );
   }
 
   if (screen === 'text' && activePersona) {
-    return <ChatScreen persona={activePersona} onBack={() => setScreen('list')} onSettings={() => setScreen('settings')} />;
+    return (
+      <SwipeBack onBack={() => setScreen('list')}>
+        <ChatScreen persona={activePersona} onBack={() => setScreen('list')} onSettings={() => setScreen('settings')} />
+      </SwipeBack>
+    );
   }
 
   if (screen === 'voice' && activePersona) {
-    return <VoiceScreen persona={activePersona} onBack={() => setScreen('list')} onSettings={() => setScreen('settings')} />;
+    return (
+      <SwipeBack onBack={() => setScreen('list')}>
+        <VoiceScreen persona={activePersona} onBack={() => setScreen('list')} onSettings={() => setScreen('settings')} />
+      </SwipeBack>
+    );
   }
 
   if (screen === 'settings' && activePersona) {
     return (
-      <PersonaSettingsScreen
-        persona={activePersona}
-        onBack={() => setScreen(lastMode)}
-        onSaved={() => setListKey((k) => k + 1)}
-        onDeleted={() => { setListKey((k) => k + 1); setActivePersona(null); setScreen('list'); }}
-      />
+      <SwipeBack onBack={() => setScreen(lastMode)}>
+        <PersonaSettingsScreen
+          persona={activePersona}
+          onBack={() => setScreen(lastMode)}
+          onSaved={() => setListKey((k) => k + 1)}
+          onDeleted={() => { setListKey((k) => k + 1); setActivePersona(null); setScreen('list'); }}
+        />
+      </SwipeBack>
     );
   }
 

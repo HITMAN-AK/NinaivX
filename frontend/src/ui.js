@@ -47,25 +47,27 @@ export function Field({ label, ...props }) {
   );
 }
 
-export function GradientButton({ title, onPress, loading, disabled, colors, style }) {
+export function GradientButton({ title, onPress, loading, disabled, colors, style, glow = true }) {
   return (
-    <TouchableOpacity
-      activeOpacity={0.85}
-      onPress={onPress}
-      disabled={disabled || loading}
-      style={[{ borderRadius: theme.radius.md, overflow: 'hidden' }, (disabled || loading) && { opacity: 0.6 }, style]}
-    >
-      <LinearGradient
-        colors={colors || c.gradViolet}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={styles.btn}
+    <View style={[{ borderRadius: theme.radius.md }, glow && theme.shadow.card, style]}>
+      <TouchableOpacity
+        activeOpacity={0.9}
+        onPress={onPress}
+        disabled={disabled || loading}
+        style={[{ borderRadius: theme.radius.md, overflow: 'hidden' }, (disabled || loading) && { opacity: 0.55 }]}
       >
-        {loading
-          ? <ActivityIndicator color="#fff" />
-          : <Text style={styles.btnText}>{title}</Text>}
-      </LinearGradient>
-    </TouchableOpacity>
+        <LinearGradient
+          colors={colors || c.gradViolet}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={styles.btn}
+        >
+          {loading
+            ? <ActivityIndicator color="#fff" />
+            : <Text style={styles.btnText}>{title}</Text>}
+        </LinearGradient>
+      </TouchableOpacity>
+    </View>
   );
 }
 
@@ -74,6 +76,36 @@ export function GhostButton({ title, onPress, style, textStyle }) {
     <TouchableOpacity onPress={onPress} activeOpacity={0.7} style={[styles.ghost, style]}>
       <Text style={[styles.ghostText, textStyle]}>{title}</Text>
     </TouchableOpacity>
+  );
+}
+
+// Sticky top bar. Keep it OUTSIDE the ScrollView so Back/Cancel stay visible
+// without scrolling. `onCancel` renders a clearly-visible "✕ Cancel" chip (top-right);
+// `onBack` renders a "‹ Back" (top-left).
+export function ScreenHeader({ title, onBack, onCancel, right, accent }) {
+  const col = accent || c.violet;
+  return (
+    <View style={styles.header}>
+      <View style={styles.headerSide}>
+        {onBack ? (
+          <TouchableOpacity onPress={onBack} hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}>
+            <Text style={styles.headerBack}>‹ Back</Text>
+          </TouchableOpacity>
+        ) : null}
+      </View>
+      <Text style={styles.headerTitle} numberOfLines={1}>{title}</Text>
+      <View style={[styles.headerSide, { alignItems: 'flex-end' }]}>
+        {onCancel ? (
+          <TouchableOpacity
+            onPress={onCancel}
+            hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
+            style={[styles.cancelChip, { borderColor: col + '66' }]}
+          >
+            <Text style={[styles.cancelText, { color: col }]}>✕  Cancel</Text>
+          </TouchableOpacity>
+        ) : (right || null)}
+      </View>
+    </View>
   );
 }
 
@@ -132,4 +164,20 @@ const styles = StyleSheet.create({
   checkBox: { width: 22, height: 22, borderRadius: 6, borderWidth: 2, alignItems: 'center', justifyContent: 'center', marginTop: 1 },
   checkMark: { color: '#fff', fontSize: 14, fontWeight: '900', lineHeight: 16 },
   checkLabel: { flex: 1, color: c.textDim, fontSize: theme.font.small, lineHeight: 19 },
+
+  header: {
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
+    paddingTop: theme.space(13), paddingBottom: theme.space(3), paddingHorizontal: theme.space(5),
+    // Break out of the parent Screen's horizontal padding so the bar spans edge-to-edge.
+    marginHorizontal: -theme.space(5),
+    backgroundColor: c.bgHeader, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: c.border,
+  },
+  headerSide: { width: 92, justifyContent: 'center' },
+  headerTitle: { flex: 1, textAlign: 'center', color: c.text, fontSize: theme.font.h3, fontWeight: '700' },
+  headerBack: { color: c.textDim, fontSize: theme.font.body, fontWeight: '600' },
+  cancelChip: {
+    alignSelf: 'flex-end', borderWidth: 1, borderRadius: theme.radius.pill,
+    paddingHorizontal: 14, paddingVertical: 7, backgroundColor: c.bgElevated2,
+  },
+  cancelText: { fontSize: theme.font.small, fontWeight: '700' },
 });
