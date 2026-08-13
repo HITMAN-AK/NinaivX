@@ -11,7 +11,7 @@ import { codeForLanguage } from '../constants';
 import VoiceInputButton from '../VoiceInputButton';
 import SyntheticVoiceButtons from '../SyntheticVoiceButtons';
 import VoicePicker from '../VoicePicker';
-import { Screen, ScreenHeader, P, Caption, Field, GradientButton, GhostButton, Checkbox } from '../ui';
+import { Screen, ScreenHeader, P, Caption, Field, GradientButton, Checkbox } from '../ui';
 
 const c = theme.colors;
 
@@ -122,12 +122,15 @@ export default function CreatePersonaScreen({ onDone, onCancel }) {
           </View>
 
           <View style={{ marginTop: theme.space(6) }}>
-            <Field label="Name" value={name} onChangeText={setName} placeholder={isLegacy ? 'e.g. Brook' : 'e.g. Luffy'} autoCapitalize="words" />
+            <Caption style={{ marginBottom: theme.space(3) }}>
+              <Text style={{ color: c.danger }}>*</Text> Fields marked with an asterisk are required
+            </Caption>
+            <Field label="Name" required value={name} onChangeText={setName} placeholder={isLegacy ? 'e.g. Brook' : 'e.g. Luffy'} autoCapitalize="words" />
             <View style={{ flexDirection: 'row', gap: theme.space(3) }}>
-              <View style={{ flex: 1 }}><Field label={isLegacy ? 'Age' : 'Age (18+)'} value={age} onChangeText={setAge} placeholder={isLegacy ? 'any age' : '18+'} keyboardType="number-pad" /></View>
-              <View style={{ flex: 1.3 }}><Field label="Gender" value={gender} onChangeText={setGender} placeholder="Male / Female" autoCapitalize="words" /></View>
+              <View style={{ flex: 1 }}><Field label={isLegacy ? 'Age' : 'Age (18+)'} required value={age} onChangeText={setAge} placeholder={isLegacy ? 'any age' : '18+'} keyboardType="number-pad" /></View>
+              <View style={{ flex: 1.3 }}><Field label="Gender" required value={gender} onChangeText={setGender} placeholder="Male / Female" autoCapitalize="words" /></View>
             </View>
-            <Field label="Relationship to you" value={relationship} onChangeText={setRelationship}
+            <Field label="Relationship to you" required value={relationship} onChangeText={setRelationship}
               placeholder={isLegacy ? 'e.g. Grandfather' : 'e.g. Best friend'} autoCapitalize="words" />
             <Field label="What should they call you?" value={nickname} onChangeText={setNickname}
               placeholder="e.g. dear, buddy, sweetheart (leave blank to use your name)" autoCapitalize="words" />
@@ -135,7 +138,7 @@ export default function CreatePersonaScreen({ onDone, onCancel }) {
             <Field label="Language they speak" value={language} onChangeText={setLanguage}
               placeholder="Type any language — e.g. Tamil, Telugu, Japanese" autoCapitalize="words" />
 
-            <Field label="Personality & memories" value={personality} onChangeText={setPersonality}
+            <Field label="Personality & memories" required value={personality} onChangeText={setPersonality}
               placeholder={`Speak or type in ${language}…`}
               multiline numberOfLines={4} style={{ minHeight: 96, textAlignVertical: 'top' }} />
             <VoiceInputButton
@@ -193,7 +196,6 @@ export default function CreatePersonaScreen({ onDone, onCancel }) {
             onPress={submit} loading={loading}
             style={{ marginTop: theme.space(4) }}
           />
-          <GhostButton title="Cancel" onPress={onCancel} />
         </ScrollView>
       </KeyboardAvoidingView>
     </Screen>

@@ -38,10 +38,14 @@ export function Input({ style, ...props }) {
   );
 }
 
-export function Field({ label, ...props }) {
+export function Field({ label, required, ...props }) {
   return (
     <View style={{ marginBottom: theme.space(3.5) }}>
-      {label ? <Text style={styles.label}>{label}</Text> : null}
+      {label ? (
+        <Text style={styles.label}>
+          {label}{required ? <Text style={{ color: c.danger }}> *</Text> : null}
+        </Text>
+      ) : null}
       <Input {...props} />
     </View>
   );
