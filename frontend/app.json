@@ -8,7 +8,10 @@
     "userInterfaceStyle": "dark",
     "backgroundColor": "#0A0A0F",
     "extra": {
-      "apiUrl": "https://ninaivx.onrender.com"
+      "apiUrl": "https://ninaivx.onrender.com",
+      "eas": {
+        "projectId": "a32e961e-6639-433e-9ae1-a313613838f7"
+      }
     },
     "ios": {
       "supportsTablet": true
@@ -19,7 +22,13 @@
         "foregroundImage": "./assets/android-icon-foreground.png",
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"
-      }
+      },
+      "permissions": [
+        "android.permission.RECORD_AUDIO",
+        "android.permission.MODIFY_AUDIO_SETTINGS",
+        "android.permission.RECORD_AUDIO",
+        "android.permission.MODIFY_AUDIO_SETTINGS"
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -27,8 +36,17 @@
     "plugins": [
       [
         "expo-audio",
-        { "microphonePermission": "Allow NinaivX to use the microphone so you can talk with your personas." }
+        {
+          "microphonePermission": "Allow NinaivX to use the microphone so you can talk with your personas."
+        }
       ]
-    ]
+    ],
+    "owner": "hitman-ak",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/a32e961e-6639-433e-9ae1-a313613838f7"
+    }
   }
 }
