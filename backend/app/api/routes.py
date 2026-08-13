@@ -618,6 +618,31 @@ async def clone_voice(
 _PREVIEW_TEXT = "Hi, this is a preview of how I sound. It's lovely to be able to talk with you."
 
 
+def _preview_line(language: str | None) -> str:
+    """
+    A short sample sentence to speak in the preview. So the preview is actually heard in
+    the persona's language (e.g. Tamil, not English), we generate the line in that
+    language; English (the default) uses a fixed line to stay fast. Falls back to the
+    English line if anything goes wrong.
+    """
+    lang = (language or "English").strip()
+    if not lang or lang.lower() == "english":
+        return _PREVIEW_TEXT
+    try:
+        from app.services.llm_service import get_llm
+        from langchain_core.messages import HumanMessage
+        llm = get_llm(model_id=settings.BEDROCK_VOICE_MODEL_ID, max_tokens=80)
+        resp = llm.invoke([HumanMessage(content=(
+            f"Write ONE short, warm sentence (about 8-15 words) introducing yourself as a voice "
+            f"preview, written entirely and naturally in {lang}. No quotes, no emojis, no stage "
+            f"directions, no translation or explanation - output only the sentence itself."
+        ))])
+        text = (resp.content if isinstance(resp.content, str) else str(resp.content)).strip()
+        return text or _PREVIEW_TEXT
+    except Exception:
+        return _PREVIEW_TEXT
+
+
 @router.get("/preview-voice")
 async def preview_voice(
     voice_id: str,
@@ -626,11 +651,13 @@ async def preview_voice(
 ):
     """
     Speak a short sample in the given voice so the user can hear it (e.g. right after
-    cloning). Works for any voice_id — a cloned voice or a ready-made one. Returns the
+    cloning). The sample is spoken in the persona's `language` (e.g. Tamil), not just
+    English. Works for any voice_id — a cloned voice or a ready-made one. Returns the
     audio as base64 JSON so the app can play it (no Latin-1 header issues).
     """
+    sample = _preview_line(language)
     audio = await voice_service.text_to_speech(
-        _PREVIEW_TEXT, voice_id, model_id=FLASH_TTS_MODEL, language_code=_lang_code(language)
+        sample, voice_id, model_id=FLASH_TTS_MODEL, language_code=_lang_code(language)
     )
     return {"audio_base64": base64.b64encode(audio).decode("ascii")}
 
