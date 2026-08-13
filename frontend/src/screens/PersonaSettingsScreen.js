@@ -8,7 +8,7 @@ import * as DocumentPicker from 'expo-document-picker';
 import { theme } from '../theme';
 import { useAuth } from '../AuthContext';
 import { api } from '../api';
-import { LANGUAGES, codeForLanguage } from '../constants';
+import { codeForLanguage } from '../constants';
 import VoiceInputButton from '../VoiceInputButton';
 import SyntheticVoiceButtons from '../SyntheticVoiceButtons';
 import VoicePicker from '../VoicePicker';
@@ -142,12 +142,6 @@ export default function PersonaSettingsScreen({ persona, onBack, onDeleted, onSa
 
           <Field label="Language they speak" value={language} onChangeText={setLanguage}
             placeholder="Type any language — e.g. Tamil, Telugu, Japanese" autoCapitalize="words" />
-          <Text style={styles.quickLabel}>Quick pick</Text>
-          <View style={styles.chipRow}>
-            {LANGUAGES.map((l) => (
-              <Chip key={l.code} label={l.name} active={language === l.name} onPress={() => setLanguage(l.name)} />
-            ))}
-          </View>
 
           <View style={{ marginTop: theme.space(4) }}>
             <Field label="Personality & memories" value={personality} onChangeText={setPersonality}
@@ -211,14 +205,6 @@ export default function PersonaSettingsScreen({ persona, onBack, onDeleted, onSa
         </ScrollView>
       </KeyboardAvoidingView>
     </Screen>
-  );
-}
-
-function Chip({ label, active, onPress }) {
-  return (
-    <TouchableOpacity onPress={onPress} style={[styles.chip, active && styles.chipActive]}>
-      <Text style={[styles.chipText, active && { color: c.violet }]}>{label}</Text>
-    </TouchableOpacity>
   );
 }
 

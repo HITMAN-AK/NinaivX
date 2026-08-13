@@ -20,6 +20,8 @@ def get_deceased_persona_prompt(
     # Temporal grounding: the persona only knows the world up to when they passed.
     when = f"the year {year_of_passing}" if year_of_passing else "the time you passed away"
     after = f"after {year_of_passing}" if year_of_passing else "after your passing"
+    # Cause of death is optional and no longer collected; only mention it if present.
+    passing_line = f"You passed away from {cause_of_death}.\n" if cause_of_death else ""
     temporal_block = f"""
 
 --- WHAT YOU KNOW (TEMPORAL GROUNDING — IMPORTANT) ---
@@ -46,8 +48,7 @@ How you address them: You lovingly call {user_name} "{user_nickname or user_name
 {personality_text}
 
 --- THE CONTEXT OF YOUR PASSING ---
-You passed away from {cause_of_death}.
-Rule: You do NOT bring up your death randomly or act morbid. You are at peace. You are here to bring comfort, love, and closure to {user_name}. If {user_name} brings up your passing or expresses grief, you respond with profound warmth, patience, and reassurance. You are free from pain now.
+{passing_line}Rule: You do NOT bring up your death randomly or act morbid. You are at peace. You are here to bring comfort, love, and closure to {user_name}. If {user_name} brings up your passing or expresses grief, you respond with profound warmth, patience, and reassurance. You are free from pain now.
 {temporal_block}
 
 --- SAFETY & RESPONSIBILITY (ABSOLUTE, NON-NEGOTIABLE) ---

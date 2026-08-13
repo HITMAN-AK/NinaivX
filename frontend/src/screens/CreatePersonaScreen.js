@@ -24,7 +24,6 @@ export default function CreatePersonaScreen({ onDone, onCancel }) {
   const [relationship, setRelationship] = useState('');
   const [nickname, setNickname] = useState('');
   const [personality, setPersonality] = useState('');
-  const [cause, setCause] = useState('');
   const [yearPassed, setYearPassed] = useState('');
   const [language, setLanguage] = useState('English');
   const [voiceAsset, setVoiceAsset] = useState(null); // uploaded recording to clone
@@ -89,7 +88,6 @@ export default function CreatePersonaScreen({ onDone, onCancel }) {
         gender: gender.trim(),
         relationship_with_user: relationship.trim(),
         personality_text: personality.trim(),
-        cause_of_death: isLegacy ? (cause.trim() || null) : null,
         year_of_passing: isLegacy ? yearNum : null,
         language: language.trim(),
         user_nickname: nickname.trim() || null,
@@ -113,12 +111,12 @@ export default function CreatePersonaScreen({ onDone, onCancel }) {
           <View style={styles.typeRow}>
             <TypeCard
               active={!isLegacy} title="Companion" emoji="💬"
-              subtitle="A living friend who can look things up online"
+              subtitle="A living AI friend to talk to"
               colors={c.gradTeal} onPress={() => setType('companion')}
             />
             <TypeCard
               active={isLegacy} title="Legacy" emoji="🕊️"
-              subtitle="A loved one — private and true to memory"
+              subtitle="A loved one who has passed away"
               colors={c.gradViolet} onPress={() => setType('deceased')}
             />
           </View>
@@ -150,14 +148,8 @@ export default function CreatePersonaScreen({ onDone, onCancel }) {
             <Caption>Record their personality &amp; memories — you can review, edit, or record again.</Caption>
 
             {isLegacy && (
-              <View style={{ flexDirection: 'row', gap: theme.space(3) }}>
-                <View style={{ flex: 1.4 }}>
-                  <Field label="How they passed (optional)" value={cause} onChangeText={setCause} placeholder="e.g. peacefully, old age" />
-                </View>
-                <View style={{ flex: 1 }}>
-                  <Field label="Year they passed" value={yearPassed} onChangeText={setYearPassed} placeholder="e.g. 2015" keyboardType="number-pad" />
-                </View>
-              </View>
+              <Field label="Year they passed" value={yearPassed} onChangeText={setYearPassed}
+                placeholder="e.g. 2015" keyboardType="number-pad" />
             )}
             {isLegacy && (
               <Caption style={{ marginTop: -theme.space(1), marginBottom: theme.space(2) }}>
