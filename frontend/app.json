@@ -8,7 +8,7 @@
     "userInterfaceStyle": "dark",
     "backgroundColor": "#0A0A0F",
     "extra": {
-      "apiUrl": ""
+      "apiUrl": "https://ninaivx.onrender.com"
     },
     "ios": {
       "supportsTablet": true
