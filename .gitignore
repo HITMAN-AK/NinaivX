@@ -39,3 +39,8 @@ Thumbs.db
 # ---- Build / temp ----
 *.tmp
 *.bak
+
+# ---- Test artifacts ----
+*.db
+_test_*.db
+.pytest_cache/
