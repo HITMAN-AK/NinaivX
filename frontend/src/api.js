@@ -101,6 +101,13 @@ export const api = {
   selectVoice: (token, id, voice_id) =>
     request(`/api/personas/${id}/select-voice`, { method: 'POST', token, body: { voice_id } }),
 
+  // Play a short sample in a given voice (cloned or ready-made) -> base64 mp3.
+  previewVoice: (token, voice_id, language) => {
+    const q = new URLSearchParams({ voice_id });
+    if (language) q.append('language', language);
+    return request(`/api/preview-voice?${q.toString()}`, { token }).then((d) => d.audio_base64 || null);
+  },
+
   // --- Speech-to-text only: audio -> { transcript } (for review before sending) ---
   stt: async (token, audioUri, languageCode) => {
     const form = new FormData();

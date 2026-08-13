@@ -12,6 +12,7 @@ import { codeForLanguage } from '../constants';
 import VoiceInputButton from '../VoiceInputButton';
 import SyntheticVoiceButtons from '../SyntheticVoiceButtons';
 import VoicePicker from '../VoicePicker';
+import { saveBase64Mp3, playUri, stopPlayback } from '../audio';
 import { Screen, ScreenHeader, H1, H2, P, Caption, Field, GradientButton, GhostButton, Card, Pill, Checkbox } from '../ui';
 
 const c = theme.colors;
@@ -36,6 +37,20 @@ export default function PersonaSettingsScreen({ persona, onBack, onDeleted, onSa
   // clone state (upload only)
   const [cloning, setCloning] = useState(false);
   const [voiceRightsOk, setVoiceRightsOk] = useState(false); // consent: right to use the recording
+  const [previewing, setPreviewing] = useState(false);
+
+  useEffect(() => () => stopPlayback(), []); // stop any preview when leaving the screen
+
+  async function previewCurrentVoice() {
+    if (!voiceId) { Alert.alert('No voice set', 'Pick or clone a voice first.'); return; }
+    try {
+      setPreviewing(true);
+      const b64 = await api.previewVoice(token, voiceId, language);
+      if (!b64) throw new Error('No audio returned.');
+      const uri = await saveBase64Mp3(b64);
+      await playUri(uri, () => setPreviewing(false));
+    } catch (e) { setPreviewing(false); Alert.alert('Could not play preview', e.message); }
+  }
 
   useEffect(() => {
     (async () => {
@@ -172,6 +187,13 @@ export default function PersonaSettingsScreen({ persona, onBack, onDeleted, onSa
           {/* Voice */}
           <H2 style={{ marginTop: theme.space(7), marginBottom: theme.space(2) }}>Voice</H2>
           <Caption>{voiceId ? `Current voice: ${voiceId.slice(0, 10)}…` : 'No voice set — a default is used.'}</Caption>
+          {voiceId ? (
+            <GhostButton
+              title={previewing ? '❚❚  Playing…' : '▶  Preview current voice'}
+              onPress={previewCurrentVoice}
+              style={{ alignSelf: 'flex-start', paddingHorizontal: 0 }}
+            />
+          ) : null}
 
           <Card style={{ marginTop: theme.space(3) }}>
             <P style={{ fontWeight: '700', marginBottom: theme.space(1) }}>Pick a ready-made voice</P>

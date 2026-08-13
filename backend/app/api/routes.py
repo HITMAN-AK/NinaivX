@@ -615,6 +615,26 @@ async def clone_voice(
     }
 
 
+_PREVIEW_TEXT = "Hi, this is a preview of how I sound. It's lovely to be able to talk with you."
+
+
+@router.get("/preview-voice")
+async def preview_voice(
+    voice_id: str,
+    language: str | None = None,
+    user: User = Depends(get_current_user),
+):
+    """
+    Speak a short sample in the given voice so the user can hear it (e.g. right after
+    cloning). Works for any voice_id — a cloned voice or a ready-made one. Returns the
+    audio as base64 JSON so the app can play it (no Latin-1 header issues).
+    """
+    audio = await voice_service.text_to_speech(
+        _PREVIEW_TEXT, voice_id, model_id=FLASH_TTS_MODEL, language_code=_lang_code(language)
+    )
+    return {"audio_base64": base64.b64encode(audio).decode("ascii")}
+
+
 @router.get("/voices")
 async def list_voices(
     gender: str | None = None,

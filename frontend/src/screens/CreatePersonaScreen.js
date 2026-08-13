@@ -93,7 +93,14 @@ export default function CreatePersonaScreen({ onDone, onCancel }) {
         user_nickname: nickname.trim() || null,
         elevenlabs_voice_id: voiceId,
       });
-      onDone();
+      const clonedNote = voiceAsset
+        ? `${name.trim()}'s voice was cloned successfully, and `
+        : '';
+      Alert.alert(
+        'Persona created',
+        `${clonedNote}${name.trim()} is ready. Start a chat or a voice call to hear them.`,
+        [{ text: 'OK', onPress: () => onDone() }]
+      );
     } catch (e) {
       Alert.alert('Could not create persona', e.message);
     } finally {
