@@ -144,17 +144,17 @@ export default function PersonaSettingsScreen({ persona, onBack, onDeleted, onSa
           <H1>{persona.name}</H1>
           <Pill color={isLegacy ? c.legacy : c.companion}>{isLegacy ? '🕊  Legacy · private, from memory' : '💬  Companion · knows current events'}</Pill>
 
-          {/* Details */}
-          <H2 style={{ marginTop: theme.space(6), marginBottom: theme.space(3) }}>Details</H2>
+          {/* Who they are */}
+          <H2 style={{ marginTop: theme.space(6), marginBottom: theme.space(3) }}>Who they are</H2>
           <Field label="Name" value={name} onChangeText={setName} autoCapitalize="words" />
           <View style={{ flexDirection: 'row', gap: theme.space(3) }}>
             <View style={{ flex: 1 }}><Field label="Age" value={age} onChangeText={setAge} keyboardType="number-pad" /></View>
             <View style={{ flex: 1.3 }}><Field label="Gender" value={gender} onChangeText={setGender} autoCapitalize="words" /></View>
           </View>
           <Field label="Relationship to you" value={relationship} onChangeText={setRelationship} autoCapitalize="words" />
-          <Field label="What should they call you?" value={nickname} onChangeText={setNickname}
-            placeholder="e.g. dear, buddy, sweetheart (blank = your name)" autoCapitalize="words" />
 
+          {/* Their story */}
+          <H2 style={{ marginTop: theme.space(6), marginBottom: theme.space(3) }}>Their story</H2>
           <Field label="Language they speak" value={language} onChangeText={setLanguage}
             placeholder="Type any language — e.g. Tamil, Telugu, Japanese" autoCapitalize="words" />
 
@@ -182,10 +182,15 @@ export default function PersonaSettingsScreen({ persona, onBack, onDeleted, onSa
             </View>
           )}
 
+          <View style={{ marginTop: theme.space(4) }}>
+            <Field label="What should they call you?" value={nickname} onChangeText={setNickname}
+              placeholder="e.g. dear, buddy, sweetheart (blank = your name)" autoCapitalize="words" />
+          </View>
+
           <GradientButton title="Save changes" colors={grad} onPress={save} loading={saving} style={{ marginTop: theme.space(4) }} />
 
-          {/* Voice */}
-          <H2 style={{ marginTop: theme.space(7), marginBottom: theme.space(2) }}>Voice</H2>
+          {/* Their voice */}
+          <H2 style={{ marginTop: theme.space(7), marginBottom: theme.space(2) }}>Their voice</H2>
           <Caption>{voiceId ? `Current voice: ${voiceId.slice(0, 10)}…` : 'No voice set — a default is used.'}</Caption>
           {voiceId ? (
             <GhostButton
