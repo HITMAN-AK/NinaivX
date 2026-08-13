@@ -62,6 +62,9 @@ class AuthRequest(BaseModel):
     email: str          # validated by Supabase Auth
     password: str
 
+class RefreshRequest(BaseModel):
+    refresh_token: str
+
 class SignupRequest(BaseModel):
     # One-step account creation: credentials + profile together.
     email: str
@@ -281,6 +284,7 @@ def signup(body: SignupRequest, db: Session = Depends(get_db)):
                    "Account and profile created, but email confirmation is required before logging in.",
         "email_confirmation_required": access_token is None,
         "access_token": access_token,
+        "refresh_token": data.get("refresh_token"),
         "user_id": uid,
         "next_step": "Click Authorize with this token, then create a persona (POST /api/personas)."
                      if access_token else "Confirm the email, then POST /api/auth/login.",
@@ -301,6 +305,21 @@ def login(body: AuthRequest):
         "expires_in": data.get("expires_in"),
         "user_id": (data.get("user") or {}).get("id"),
         "next_step": "Click Authorize in Swagger and paste the access_token.",
+    }
+
+
+@router.post("/auth/refresh", tags=["Auth"])
+def refresh(body: RefreshRequest):
+    """
+    Exchange a Supabase refresh_token for a fresh access_token (and a new refresh_token).
+    Lets the app keep the user logged in across restarts without re-entering credentials.
+    Raises if the refresh token is invalid/expired (the app then asks the user to log in).
+    """
+    data = _supabase_auth("token?grant_type=refresh_token", {"refresh_token": body.refresh_token})
+    return {
+        "access_token": data.get("access_token"),
+        "refresh_token": data.get("refresh_token"),
+        "expires_in": data.get("expires_in"),
     }
 
 

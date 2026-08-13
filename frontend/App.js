@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, View, ActivityIndicator } from 'react-native';
 import { AuthProvider, useAuth } from './src/AuthContext';
 import { theme } from './src/theme';
 import AuthScreen from './src/screens/AuthScreen';
@@ -12,12 +12,21 @@ import PersonaSettingsScreen from './src/screens/PersonaSettingsScreen';
 import SwipeBack from './src/SwipeBack';
 
 function Root() {
-  const { token } = useAuth();
+  const { token, restoring } = useAuth();
   // screen: 'list' | 'create' | 'text' | 'voice' | 'settings'
   const [screen, setScreen] = useState('list');
   const [activePersona, setActivePersona] = useState(null);
   const [lastMode, setLastMode] = useState('text'); // where settings' back returns to
   const [listKey, setListKey] = useState(0);
+
+  // While restoring a saved session, show a brief loading screen (avoids flashing login).
+  if (restoring) {
+    return (
+      <View style={styles.loading}>
+        <ActivityIndicator color={theme.colors.violet} size="large" />
+      </View>
+    );
+  }
 
   if (!token) return <AuthScreen />;
 
@@ -83,4 +92,5 @@ export default function App() {
 
 const styles = StyleSheet.create({
   app: { flex: 1, backgroundColor: theme.colors.bg },
+  loading: { flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: theme.colors.bg },
 });

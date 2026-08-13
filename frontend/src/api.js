@@ -66,6 +66,10 @@ export const api = {
   login: (email, password) =>
     request('/api/auth/login', { method: 'POST', body: { email, password } }),
 
+  // Exchange a refresh token for a fresh access token (keeps the user logged in).
+  refresh: (refresh_token) =>
+    request('/api/auth/refresh', { method: 'POST', body: { refresh_token } }),
+
   me: (token) => request('/api/me', { token }),
 
   disclosure: () => request('/api/disclosure'),
