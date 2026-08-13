@@ -19,6 +19,68 @@ function resolveBaseUrl() {
 
 export const API_BASE = resolveBaseUrl();
 
+// ---- Auth bridge (wired from AuthContext) ----
+// Lets the client transparently refresh an expired access token on a 401 and retry.
+let _refreshToken = null;
+let _onRefreshed = null; // (accessToken, refreshToken) => void
+let _onAuthLost = null;  // () => void  (refresh failed → force logout)
+let _refreshing = null;  // in-flight refresh promise (dedupe concurrent 401s)
+
+export function configureAuth({ refreshToken, onRefreshed, onAuthLost } = {}) {
+  if (refreshToken !== undefined) _refreshToken = refreshToken;
+  if (onRefreshed !== undefined) _onRefreshed = onRefreshed;
+  if (onAuthLost !== undefined) _onAuthLost = onAuthLost;
+}
+
+async function tryRefresh() {
+  if (!_refreshToken) return null;
+  if (!_refreshing) {
+    _refreshing = (async () => {
+      try {
+        const res = await fetch(`${API_BASE}/api/auth/refresh`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ refresh_token: _refreshToken }),
+        });
+        if (!res.ok) throw new Error('refresh failed');
+        const data = await res.json();
+        if (!data.access_token) throw new Error('no token');
+        _refreshToken = data.refresh_token || _refreshToken;
+        _onRefreshed && _onRefreshed(data.access_token, _refreshToken);
+        return data.access_token;
+      } catch {
+        _onAuthLost && _onAuthLost();
+        return null;
+      }
+    })();
+  }
+  const token = await _refreshing;
+  _refreshing = null;
+  return token;
+}
+
+// Low-level fetch that, for authed requests, refreshes the token once on a 401 and retries.
+async function fetchWithRefresh(url, init = {}, isAuthed = false) {
+  let res;
+  try {
+    res = await fetch(url, init);
+  } catch (e) {
+    throw new Error(`Cannot reach the server at ${API_BASE}. Is the backend running (host 0.0.0.0) and on the same WiFi?`);
+  }
+  if (res.status === 401 && isAuthed && _refreshToken) {
+    const newToken = await tryRefresh();
+    if (newToken) {
+      const headers = { ...(init.headers || {}), Authorization: `Bearer ${newToken}` };
+      try {
+        res = await fetch(url, { ...init, headers });
+      } catch (e) {
+        throw new Error(`Cannot reach the server at ${API_BASE}.`);
+      }
+    }
+  }
+  return res;
+}
+
 async function request(path, { method = 'GET', body, token, isForm } = {}) {
   const headers = {};
   if (token) headers['Authorization'] = `Bearer ${token}`;
@@ -30,12 +92,7 @@ async function request(path, { method = 'GET', body, token, isForm } = {}) {
     payload = JSON.stringify(body);
   }
 
-  let res;
-  try {
-    res = await fetch(`${API_BASE}${path}`, { method, headers, body: payload });
-  } catch (e) {
-    throw new Error(`Cannot reach the server at ${API_BASE}. Is the backend running (host 0.0.0.0) and on the same WiFi?`);
-  }
+  const res = await fetchWithRefresh(`${API_BASE}${path}`, { method, headers, body: payload }, !!token);
 
   const text = await res.text();
   let data = {};
@@ -117,14 +174,9 @@ export const api = {
     const form = new FormData();
     form.append('file', { uri: audioUri, name: 'input.m4a', type: 'audio/m4a' });
     if (languageCode) form.append('language_code', languageCode);
-    let res;
-    try {
-      res = await fetch(`${API_BASE}/api/stt`, {
-        method: 'POST', headers: { Authorization: `Bearer ${token}` }, body: form,
-      });
-    } catch (e) {
-      throw new Error(`Cannot reach the server at ${API_BASE}.`);
-    }
+    const res = await fetchWithRefresh(`${API_BASE}/api/stt`, {
+      method: 'POST', headers: { Authorization: `Bearer ${token}` }, body: form,
+    }, !!token);
     const text = await res.text();
     let data = {}; try { data = JSON.parse(text); } catch {}
     if (!res.ok) throw new Error(data.detail || `Transcription failed (${res.status})`);
@@ -142,16 +194,9 @@ export const api = {
     form.append('persona_id', persona_id);
     form.append('file', { uri: audioUri, name: 'input.m4a', type: 'audio/m4a' });
 
-    let res;
-    try {
-      res = await fetch(`${API_BASE}/api/voice-chat`, {
-        method: 'POST',
-        headers: { Authorization: `Bearer ${token}` },
-        body: form,
-      });
-    } catch (e) {
-      throw new Error(`Cannot reach the server at ${API_BASE}. Is the backend running and on the same WiFi?`);
-    }
+    const res = await fetchWithRefresh(`${API_BASE}/api/voice-chat`, {
+      method: 'POST', headers: { Authorization: `Bearer ${token}` }, body: form,
+    }, !!token);
     const text = await res.text();
     let data = {}; try { data = JSON.parse(text); } catch {}
     if (!res.ok) throw new Error(data.detail || `Voice chat failed (${res.status})`);
@@ -173,16 +218,9 @@ export const api = {
     // Consent is gated in the UI; confirm it to the server too (enforced server-side).
     form.append('rights_confirmed', 'true');
 
-    let res;
-    try {
-      res = await fetch(`${API_BASE}/api/clone-voice`, {
-        method: 'POST',
-        headers: { Authorization: `Bearer ${token}` },
-        body: form,
-      });
-    } catch (e) {
-      throw new Error(`Cannot reach the server at ${API_BASE}.`);
-    }
+    const res = await fetchWithRefresh(`${API_BASE}/api/clone-voice`, {
+      method: 'POST', headers: { Authorization: `Bearer ${token}` }, body: form,
+    }, !!token);
     const text = await res.text();
     let data = {}; try { data = JSON.parse(text); } catch {}
     if (!res.ok) throw new Error(data.detail || `Voice cloning failed (${res.status})`);

@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { api } from './api';
+import { api, configureAuth } from './api';
 
 const AuthContext = createContext(null);
 export const useAuth = () => useContext(AuthContext);
@@ -64,6 +64,19 @@ export function AuthProvider({ children }) {
     try { await AsyncStorage.removeItem(SESSION_KEY); } catch {}
     setToken(null); setRefreshToken(null); setUser(null);
   }
+
+  // Wire the API client so it can auto-refresh the access token on a 401 and retry.
+  useEffect(() => {
+    configureAuth({
+      refreshToken,
+      onRefreshed: (access, refresh) => {
+        setToken(access);
+        setRefreshToken(refresh);
+        persist(access, refresh, user);
+      },
+      onAuthLost: () => { clearSession(); },
+    });
+  }, [refreshToken, user]);
 
   async function signup(email, password, name, age, language) {
     const res = await api.signup(email, password, name, age, language);
