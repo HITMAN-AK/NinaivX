@@ -2,9 +2,18 @@
 // iPhone running Expo Go can reach the FastAPI backend over WiFi.
 import Constants from 'expo-constants';
 
-// Expo tells us the Metro bundler host (your PC's LAN IP) via hostUri.
-// e.g. "10.122.207.33:8081" -> we use the IP with the backend port 8000.
+// Resolve the backend base URL.
+// 1) PRODUCTION: an explicit URL (set EXPO_PUBLIC_API_URL, or app.json > expo.extra.apiUrl)
+//    — this is what published/shared builds use to reach the deployed backend (Render).
+// 2) DEV: auto-detect the PC's LAN IP from Metro so a phone on the same WiFi can reach it.
 function resolveBaseUrl() {
+  const explicit =
+    process.env.EXPO_PUBLIC_API_URL ||
+    Constants.expoConfig?.extra?.apiUrl ||
+    Constants.manifest2?.extra?.expoClient?.extra?.apiUrl ||
+    '';
+  if (explicit) return explicit.replace(/\/+$/, ''); // strip any trailing slash
+
   const hostUri =
     Constants.expoConfig?.hostUri ||
     Constants.expoGoConfig?.hostUri ||

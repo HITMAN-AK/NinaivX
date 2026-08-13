@@ -7,6 +7,9 @@
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "dark",
     "backgroundColor": "#0A0A0F",
+    "extra": {
+      "apiUrl": ""
+    },
     "ios": {
       "supportsTablet": true
     },
