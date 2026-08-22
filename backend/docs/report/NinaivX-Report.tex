@@ -41,6 +41,14 @@
     \caption{#2}\label{#3}
   \end{figure}}
 
+% Renders figures/<file> if it exists, else a labelled placeholder box, so the
+% document always compiles and auto-upgrades the moment you drop the file in.
+% Usage: \imgorph{file.png}  or  \imgorph[0.45\linewidth]{file.png}
+\newcommand{\imgorph}[2][\linewidth]{%
+  \IfFileExists{figures/#2}%
+    {\includegraphics[width=#1]{#2}}%
+    {\fbox{\parbox[c][3.6cm][c]{#1}{\centering\itshape [\,add\\ \texttt{figures/#2}\,]}}}}
+
 \begin{document}
 
 %=====================================================================
@@ -56,8 +64,8 @@ Dual-Mode Voice Conversational AI for\\[4pt]
 Bereavement Support and Companionship\par}
 \vspace{2cm}
 
-% TODO IMAGE: replace with the University of Sheffield crest (logo).
-\placeholder{University of Sheffield logo}{}
+% Optional: add figures/sheffield-logo.png for the University crest.
+\imgorph[0.28\linewidth]{sheffield-logo.png}
 \vspace{1.5cm}
 
 {\large Ashwin Kumar Ramesh Kumar\par}
@@ -186,6 +194,30 @@ Because factual reliability is the central risk of a griefbot, the safety litera
 \section{Ethics of the digital afterlife}
 The ethical literature is comparatively young. \"Ohman and Floridi introduced the notion of a digital afterlife industry and offered an informational-economic critique of it \cite{ohman2017political}, later arguing that a person's digital remains deserve dignity-based protection analogous to that afforded to human remains \cite{ohman2018ethical}; both, however, predate generative AI and offer little operational guidance. Lindemann \cite{lindemann2022deathbots} examines ``deathbots'' specifically, arguing that generating \emph{new} utterances in a dead person's name raises duties distinct from merely preserving their words. Most concretely, Hollanek and Nowaczyk-Basi\'nska \cite{hollanek2024griefbots} use speculative design to propose safeguards for postmortem avatars, including the dignified ``retirement'' of a bot, AI transparency, age restrictions and mutual consent. These proposals are normative and speculative; NinaivX can be read, in part, as an attempt to translate several of them into a working system.
 
+\section{Comparative summary of existing systems}
+\label{sec:compare}
+It is useful to draw the preceding survey together and look at the representative systems side by side, along the dimensions that matter for a griefbot. Table~\ref{tab:compare} does this across six axes: whether the system speaks (voice), whether it remembers across a conversation (memory), whether it has any explicit safeguard against fabricating facts about the person it represents, whether it is transparent about being an AI, whether it is open enough to be inspected or reproduced, and whether any evaluation of it has been published. The pattern is telling. Every commercial system that offers open-ended conversation with the deceased --- Project December and, most directly, \emph{You, Only Virtual} --- scores poorly on precisely the axes that protect a vulnerable user: none documents an anti-fabrication mechanism, none publishes a transparency guarantee, and none has been openly evaluated. The one system that is genuinely safe against fabrication, HereAfter, achieves this only by refusing to generate at all --- it replays consented recordings and cannot answer a new question. NinaivX is distinguished not by any single feature but by being the only entry that answers all six axes at once: a generative, voice-based system that is nonetheless grounded, transparent, open and evaluated.
+
+\begin{table}[H]
+\centering
+\caption{How NinaivX compares with representative existing systems (\checkmark~yes, $\circleddash$~partial, $\times$~no).}
+\label{tab:compare}
+\small
+\begin{tabularx}{\linewidth}{@{}Xcccccc@{}}
+\toprule
+\textbf{System} & \textbf{Voice} & \textbf{Memory} & \textbf{Anti-fab.} & \textbf{Transp.} & \textbf{Open} & \textbf{Eval.} \\
+\midrule
+ELIZA \cite{weizenbaum1966eliza}              & $\times$    & $\times$    & $\times$     & $\times$    & \checkmark  & $\times$ \\
+XiaoIce \cite{zhou2020xiaoice}                & \checkmark  & \checkmark  & $\times$     & $\times$    & $\times$    & \checkmark \\
+Replika \cite{replika}                        & \checkmark  & \checkmark  & $\circleddash$ & $\circleddash$ & $\times$ & \checkmark \\
+HereAfter \cite{hereafter}                    & \checkmark  & $\times$    & \checkmark   & \checkmark  & $\times$    & $\times$ \\
+Project December \cite{fagone2021jessica}     & $\times$    & $\circleddash$ & $\times$  & $\times$    & $\times$    & $\times$ \\
+You, Only Virtual \cite{yov}                  & \checkmark  & \checkmark  & $\times$     & $\times$    & $\times$    & $\times$ \\
+\textbf{NinaivX (this work)}                  & \checkmark  & \checkmark  & \checkmark   & \checkmark  & \checkmark  & \checkmark \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
 \section{Summary and identified gap}
 \label{sec:gap}
 Four trends converge from this review. Conversational AI is fluent but prone to fabrication \cite{brown2020language,ji2023survey}; voice can now be cloned from seconds of audio, carrying real consent and privacy risks \cite{wang2023valle,elevenlabs}; AI companions can relieve loneliness but risk fostering dependency \cite{ta2020user,laestadius2024human}; and applications for the deceased are either authentic-but-static \cite{hereafter} or conversational-but-unconstrained \cite{fagone2021jessica}. Existing systems, and \emph{You, Only Virtual} in particular, leave four issues open: they lack an explicit \textbf{safety} mechanism against fabrication; they do not document \textbf{transparency} about the AI's nature; they are \textbf{closed} and cannot be inspected or reproduced; and they publish no \textbf{evaluation} of their safety or effectiveness. A fifth, cross-cutting need is low-latency \emph{voice} across both a deceased and a living persona. These openings are analysed systematically as gaps G1--G9 in the next chapter, and they define the requirements of NinaivX.
@@ -281,6 +313,29 @@ S10 & Support healthy grieving and closure; avoid dependency-forming design. & G
 \section{Could-have and won't-have requirements}
 Several desirable features were deliberately deferred. The most significant is true retrieval-augmented generation over uploaded memories (C1), which would deepen the grounding of M13; also deferred are real-time streaming (full-duplex) audio (C2), voice-usage metering (C3), production hardening such as rate limiting and restricted CORS (C4), and the storage of full conversation transcripts (C5) --- the last omitted deliberately, since the memory design is summary-based for privacy. Out of scope for this dissertation (``won't have'') are real-time video or lip-synced avatars, dedicated multilingual models for ancestral languages, payment and subscription integration, public app-store deployment, and any company-incorporation or legal work; these belong to a product roadmap rather than a research artefact.
 
+\section{Non-functional requirements}
+\label{sec:nfr}
+The functional requirements above say what the system must \emph{do}; a second, equally important set says how well it must do it. These non-functional requirements, summarised in Table~\ref{tab:nfr}, shaped many of the design and implementation choices described in the following chapters, and several of them are in genuine tension with one another --- most obviously, richer memory and lower latency both pull against the project's strict stance on privacy. Where they conflict, privacy and safety were treated as the higher priority, in keeping with the aim of the project.
+
+\begin{table}[H]
+\centering
+\caption{Non-functional requirements and how they are addressed.}
+\label{tab:nfr}
+\small
+\begin{tabularx}{\linewidth}{@{}l X@{}}
+\toprule
+\textbf{Quality} & \textbf{Requirement and how it is met} \\
+\midrule
+Responsiveness & A voice turn should feel conversational (a few seconds, not tens of seconds). Met by a brief voice-call mode, a lower-latency synthesis model, a warm-up call, and deferring memory updates to a background task. \\
+Privacy        & No real biometric data in the build, and the minimum of conversational data retained. Met by synthetic-only voices, a rolling summary rather than a transcript, and EU-region inference. \\
+Security       & Every data-touching request authenticated, and no user able to reach another's data. Met by verified Supabase tokens and per-persona ownership checks. \\
+Reliability    & The application should degrade gracefully rather than crash when an optional service is unavailable. Met by lazy initialisation of the voice provider and clear, typed error responses. \\
+Usability      & Usable on an ordinary phone, in the user's own language. Met by a React Native / Expo client and per-persona language handling. \\
+Reproducibility & The system should be documented and rebuildable by a third party. Met by environment-variable configuration and an openly documented codebase. \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
 \section{Ethical and safety requirements}
 \label{sec:ethics-req}
 Because the subject matter is sensitive, the project's ethical stance is itself a source of requirements, and it operates at two levels. First, the \emph{application itself uses synthetic voices and stores no real biometric data}: the ready-made voices offered in the app are ElevenLabs' own synthetic or professionally licensed voices, used under the provider's terms of service and not recordings of any identifiable individual, and the voice-cloning feature is demonstrated on AI-generated samples rather than on a real person's voice. This is a deliberate choice, because a real individual's voice is biometric personal data whose use would require separate consent and licensing. Second, because the system is ultimately evaluated with real people, a \emph{user study was designed and received formal ethical approval from the University of Sheffield} (reference~076699). That study is remote and anonymous, restricted to adults --- the eighteen-or-over rule being enforced in the application itself --- obtains informed consent and screens out anyone in acute grief, collects only usability and perception feedback rather than any personal grief data, and signposts sources of support. Taken together, these commitments --- synthetic voices in the build, an ethically approved and anonymous user evaluation, air-gapping against fabrication, per-user isolation (M11), summary-only memory (C5 omitted by design), and explicit AI transparency (S9) --- translate several recommendations from the ethics literature \cite{hollanek2024griefbots,ohman2018ethical} into concrete engineering and process constraints, and they shape the design presented next.
@@ -301,17 +356,24 @@ Three principles shape the design of NinaivX, each answering a gap from Chapter~
 \label{sec:arch}
 At the centre of the system is a compiled agent graph that receives a user's message and routes it, according to the persona's type, to one of two persona nodes. Figure~\ref{fig:arch} shows the overall architecture: the mobile client speaks only to the API layer, which authenticates the request, confirms that the persona belongs to the requesting user, and hands control to the agent. The agent, in turn, calls the language model and --- for the companion only --- a web-search tool, drawing the persona's identity and memory from the database.
 
-% TODO IMAGE: use your existing docs/NinaivX-Architecture.png
-% \includegraphics[width=\linewidth]{NinaivX-Architecture.png}
-\placeholder{System architecture (mobile client $\rightarrow$ API $\rightarrow$ LangGraph agent $\rightarrow$ Bedrock/ElevenLabs/Supabase). Use docs/NinaivX-Architecture.png}{The dual-mode architecture of NinaivX.}{fig:arch}
+\begin{figure}[H]
+\centering
+\imgorph{NinaivX-Architecture.png}
+\caption{The dual-mode architecture of NinaivX: the mobile client speaks only to the API layer, which authenticates the request, confirms persona ownership, and hands control to the LangGraph agent over AWS Bedrock, ElevenLabs and Supabase.}
+\label{fig:arch}
+\end{figure}
 
 The routing decision is made by a \emph{supervisor}. Importantly, this supervisor is a deterministic branch on the persona's stored type, not a second language-model call: a deceased persona is always routed to the air-gapped node and a companion is always routed to the web-connected node. This design choice matters for both safety and cost. For safety, it means the routing itself cannot be talked out of its decision by a cleverly worded message; for cost and latency, it means no model tokens are spent deciding where to go. The two nodes then differ in exactly one respect that carries the entire safety distinction between them, described next.
 
 \section{The air-gap as a code-level guarantee}
 The legacy persona's defining risk is fabrication: an AI that answers as a specific, real, deceased person must never invent memories or facts they never had (gap G3). NinaivX addresses this by \emph{air-gapping} the legacy persona --- denying it any ability to reach the live internet. Crucially, this is realised as a property of the graph, not as a sentence in a prompt. The deceased node is never given any tools; the graph provides it with a single path that leads straight to completion. Even if the model ``wanted'' to search the web, there is no tool bound to it and no edge in the graph that could execute one, so the action is structurally impossible. The companion node, by contrast, is explicitly given a web-search tool and a loop that lets it consult the web and then continue --- the well-known reason--act (ReAct) pattern. This asymmetry, illustrated in Figure~\ref{fig:graph}, is the single most important element of the design: it converts an ethical requirement into a guarantee that holds regardless of what the model is asked to do.
 
-% TODO IMAGE: a simple diagram of the two agent paths.
-\placeholder{Agent graph: supervisor $\rightarrow$ \{deceased node $\rightarrow$ END\} vs \{companion node $\leftrightarrow$ tools\}. Draw a simple two-branch diagram.}{The agent graph, showing the air-gapped deceased path and the web-connected companion loop.}{fig:graph}
+\begin{figure}[H]
+\centering
+\imgorph[0.8\linewidth]{agent-graph.png}
+\caption{The agent graph: a deterministic supervisor routes a deceased persona to the air-gapped node (a single edge to \textsc{end}, no tools bound) and a companion to the web-connected node, which loops through the tool node in a reason--act cycle.}
+\label{fig:graph}
+\end{figure}
 
 \section{Temporal grounding of the legacy persona}
 Air-gapping blocks the \emph{live} internet, but it does not by itself constrain what the underlying model already knows. A large language model's training data extends years beyond any given person's death, so a naive legacy persona could still ``remember'' events that occurred after the real person died --- a subtle but jarring failure of authenticity. NinaivX therefore adds \emph{temporal grounding}: a legacy persona optionally records the year in which the person passed away, and the system prompt instructs it that its knowledge of the world stops at that year, that it must not describe anything that happened afterwards, and that it should gently deflect questions about later events rather than guess. This keeps the persona true to its own time and is a small but meaningful strengthening of the anti-fabrication design.
@@ -331,10 +393,19 @@ The voice experience is a request--response loop: the user's recorded speech is 
 \label{sec:datamodel}
 The data model, shown in Figure~\ref{fig:erd}, is intentionally small. A \textbf{User} owns many \textbf{Persona}s, and each Persona has exactly one \textbf{Conversation}. The User record holds only a name, an age and a preferred language; the account's identity is the authentication provider's own user id, so the backend never stores a password. A Persona records its type (deceased or companion), the descriptive fields that build its character (name, age, gender, relationship to the user, and a free-text personality description), an optional cause of death and year of passing for legacy personas, a per-persona language and nickname, and the identifier of the voice it speaks with. The Conversation record holds the rolling summary described above. The age field carries a safety rule that follows directly from the two personas' meanings: a companion, being a living adult friend, must be eighteen or older, whereas a legacy persona may be of any age, because a bereaved user may have lost a child.
 
-\placeholder{Entity-relationship diagram: User (1)---&lt;(many) Persona (1)---(1) Conversation, with key fields listed.}{The NinaivX data model.}{fig:erd}
+\begin{figure}[H]
+\centering
+\imgorph[0.85\linewidth]{er-diagram.png}
+\caption{The NinaivX data model: a User owns many Personas, and each Persona has exactly one Conversation (which holds the rolling summary).}
+\label{fig:erd}
+\end{figure}
 
 \section{Security and privacy design}
 Every request that touches a user's data must be authenticated, and every persona-scoped operation must confirm that the persona belongs to the requesting user, so that one user can never reach another's persona. Beyond access control, a key privacy decision is made before any code runs: the application itself uses only synthetic voices and stores no real, identifiable person's biometric data (Section~\ref{sec:ethics-req}), which removes a large class of consent and licensing problems. The separate evaluation of the system, which does involve real people, was conducted under formal ethical approval, with the anonymity, consent and screening safeguards described in Section~\ref{sec:ethics-req}.
+
+\section{Reliability and error handling}
+\label{sec:reliability}
+A system that speaks to grieving people must fail quietly and safely, never abruptly. The design therefore treats error handling as a first-class concern rather than an afterthought. The guiding rule is that the absence of an optional capability should degrade the experience, not break it: if no speech-provider key is configured, the application still starts and serves text conversation normally, and the voice endpoints return a clear ``service unavailable'' response rather than throwing. The expensive, non-essential work of rewriting the conversation summary is deliberately pushed into a background task that runs after the reply has been sent, so that a failure or slowdown in summarisation can never delay or break the user's turn; that task also opens and disposes of its own database session, so it cannot interfere with the request that spawned it. On the client, an expired authentication token is caught and silently refreshed before the request is retried, so a lapsed session heals itself instead of ejecting the user mid-conversation. And because every input is validated at the boundary (Section~\ref{sec:nfr}), malformed or unsafe data is rejected with an explanatory message before any handler runs, rather than surfacing as an opaque failure deeper in the system. Taken together, these choices mean that the failure modes a user is most likely to meet --- a missing voice, a dropped network, an expired session, a mistyped field --- are all handled gracefully, which matters more here than in an ordinary application because of who the users are.
 
 \section{Design decisions and alternatives considered}
 \label{sec:decisions}
@@ -359,6 +430,8 @@ The lifecycle of a text message illustrates how the pieces fit together. The cli
 
 \section{The agent}
 The agent is a compiled \textbf{LangGraph} state graph with three nodes: a deceased persona node, a companion persona node, and a tool node that executes the web search. The graph is built once when the module is imported, not per request. From the start node, a conditional edge routes to the correct persona node based on the persona's type. The deceased node has a single outgoing edge to the end of the graph --- one turn, then done --- and, decisively, its language model is created \emph{without} binding any tools, which is what makes the air-gap a structural fact rather than a request. The companion node instead binds the web-search tool; a conditional edge inspects its output and, if the model has asked to use the tool, routes to the tool node and then loops back to the companion node, implementing the ReAct pattern. The shared state passed between nodes is a small typed structure carrying the running list of messages (with an append-only reducer so history accumulates correctly), the persona's type and identifier, and a flag indicating whether the current turn is a brief voice-call turn.
+
+The web-search capability given to the companion is deliberately modest: a single keyless tool that issues a lightweight query and returns short textual results for the model to read and incorporate. It is bound only to the companion node, and the conditional edge that follows that node inspects the model's output and routes to the tool node whenever the model has asked to search, looping back afterwards so that the model can read the results and continue --- at most a few iterations before it produces its final reply. This is the entire mechanism by which the companion can discuss current information, and, crucially, it is absent from the deceased node, which is the concrete form the air-gap takes in the code. Keeping the tool keyless and simple also means the companion has no dependency on a paid search provider and degrades to ordinary conversation if a search fails.
 
 Each persona node loads the persona, its owner and the current conversation summary from the database, and constructs a system prompt tailored to that persona before invoking the model. The prompts are where much of the safety behaviour lives, and they are described next.
 
@@ -387,16 +460,50 @@ The client is a single-codebase mobile application built with \textbf{React Nati
 
 The screens follow the natural flow of the product. An authentication screen offers one-step sign-up (collecting name, email, password, age and language at once) and log-in, with client-side checks mirroring the server's rules and a required consent checkbox confirming the user is an adult and understands that every persona is an AI recreation. The home screen lists the user's personas, each card showing a colour-coded badge distinguishing a legacy persona from a companion and offering direct buttons into text or voice conversation. Creating a persona is presented as a three-step wizard --- \emph{who they are}, \emph{their story}, and \emph{their voice} --- with required fields clearly marked; the ``their story'' step lets the user dictate the personality description by voice, and, for a legacy persona, record the year the person passed away; the ``their voice'' step lets the user pick a ready-made voice or upload a recording to clone (behind the rights-consent checkbox). Figure~\ref{fig:screens} shows the key screens.
 
-% TODO IMAGE: add 2–4 app screenshots (persona list, create wizard, chat, voice call).
-\placeholder{App screenshots: persona list, the create-persona wizard, the text chat, and the voice-call screen.}{Key screens of the NinaivX mobile application.}{fig:screens}
+\begin{figure}[H]
+\centering
+\begin{minipage}[t]{0.44\linewidth}\centering
+  \imgorph{screen-signup.png}\\[3pt]{\small (a) Sign-up / log-in}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.44\linewidth}\centering
+  \imgorph{screen-create.png}\\[3pt]{\small (b) Create-persona wizard}
+\end{minipage}
+
+\vspace{10pt}
+\begin{minipage}[t]{0.44\linewidth}\centering
+  \imgorph{screen-chat.png}\\[3pt]{\small (c) Text chat}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.44\linewidth}\centering
+  \imgorph{screen-voice.png}\\[3pt]{\small (d) Voice call}
+\end{minipage}
+\caption{Key screens of the NinaivX mobile application: (a) sign-up and log-in, (b) the three-step create-persona wizard, (c) the text-chat interface, and (d) the voice-call interface.}
+\label{fig:screens}
+\end{figure}
 
 The two conversation screens share a single, persisted history, so a user's text and voice exchanges with a persona form one continuous thread that survives app restarts. The text screen is a familiar chat, opening with the AI-disclosure message and marking any reply that came from a spoken turn. The voice screen is a streamlined ``call'': a single large microphone button moves through idle, recording, processing and speaking states; a tap records the user's turn, a second tap sends it in one round-trip that transcribes, generates and synthesises the reply, which then plays automatically. The user can \emph{barge in} --- tapping while the persona is speaking stops playback and starts a new turn --- and the screen warms up the fast model when it opens so the first turn is quick.
 
 \section{Deployment and distribution}
 The backend is deployed on \textbf{Render}, configured entirely through environment variables so that no secret is committed to source control; the client is pointed at the deployed URL for production while retaining automatic local-network detection for development. Distributing the mobile client for testing without a native app-store release presented a practical challenge, since a managed Expo project is normally run from a developer's machine. To give participants a stable, always-available link, the Expo tunnel is hosted on a small cloud virtual machine and kept running under a process manager, and the backend serves a public ``open the app'' page: participants tap an ordinary web link, which launches the app in Expo Go. Because that web link is fixed and only an environment variable behind it changes if the tunnel is refreshed, the link shared with participants never needs to change. The workflow of the whole system, from installing the app to holding a conversation, is summarised in Figure~\ref{fig:workflow}.
 
-% TODO IMAGE: use your existing docs/NinaivX-Workflow.png
-\placeholder{End-to-end workflow (install $\rightarrow$ sign up $\rightarrow$ create persona $\rightarrow$ converse). Use docs/NinaivX-Workflow.png}{The end-to-end workflow of NinaivX.}{fig:workflow}
+\begin{figure}[H]
+\centering
+\imgorph{NinaivX-Workflow.png}
+\caption{The end-to-end workflow of NinaivX, from installing the app through signing up, creating a persona, and holding a text or voice conversation.}
+\label{fig:workflow}
+\end{figure}
+
+\section{Development methodology and project management}
+\label{sec:pm}
+The project was run in an iterative, incremental style rather than as a single big-design-up-front effort, which suited a solo project exploring an unfamiliar technology (agent orchestration with LangGraph) under a fixed academic deadline. Work proceeded in short cycles, each delivering a working slice end to end --- for example, ``text chat with one persona,'' then ``two persona types with routing,'' then ``voice in and out,'' then ``cloning and multilingual'' --- so that there was always a runnable system to test and reason about, and so that the riskiest unknowns were confronted early. This mattered in practice: building a thin but complete vertical slice first surfaced the header-encoding and latency problems (Section~\ref{sec:challenges}) while they were still cheap to fix, rather than at the end. Figure~\ref{fig:gantt} shows the overall timeline and the major phases, from the initial literature survey and requirements work, through the design and implementation of the backend and mobile client, to testing, the ethics-approved user study, and the writing up.
+
+\begin{figure}[H]
+\centering
+\imgorph{NinaivX-Gantt.png}
+\caption{Project timeline: the major phases of NinaivX from literature survey and requirements through design, implementation, testing, evaluation and write-up.}
+\label{fig:gantt}
+\end{figure}
+
+Several supporting practices kept the work manageable. Version control with Git gave a reliable history and a safe way to try changes on a branch before merging. Configuration and secrets were kept entirely in environment variables, so the same codebase ran unchanged on a laptop for development and on Render in production. Risk was managed pragmatically as it arose: the cost of the paid language and speech services was contained by defaulting to a lower-latency model for brief voice turns and by not calling those services in the automated tests; the rotation of the free tunnel URL, which threatened to break the participant link mid-study, was neutralised by the stable redirect described below; and the dependency on external ethical approval, an unavoidable schedule risk, was mitigated by preparing the participant materials and building the system in parallel with the application, so that the user study could begin as soon as approval was granted. The single largest external risk --- that the safety behaviour would prove impossible to guarantee through prompting alone --- was retired by the architectural decision to make the air-gap a property of the graph rather than of a prompt, so that the most important guarantee did not depend on the model's cooperation at all.
 
 \section{Implementation challenges}
 \label{sec:challenges}
@@ -447,6 +554,9 @@ The main user journeys were tested manually against the running system: signing 
 
 \section{Safety and robustness testing}
 Because the safety properties are the heart of the contribution, they were tested directly. The \emph{air-gap} was checked by confirming, in both the code and behaviour, that the legacy persona has no web-search capability and cannot retrieve live information, while the companion can --- and by confirming that the routing between them is deterministic. \emph{Ownership} was checked by attempting to access a persona that belongs to a different user and confirming that the request is refused, closing the insecure-direct-object-reference risk. The \emph{content policy} was probed by attempting to steer the legacy persona toward inappropriate territory and confirming that it declines and redirects, and by confirming that the companion applies its more permissive but still bounded policy. \emph{Temporal grounding} was checked by asking a legacy persona with a recorded year of passing about events after that year, and confirming that it declined to invent them. Finally, the \emph{consent gate} on voice cloning was confirmed to be enforced on the server, not merely in the interface. Together these checks give confidence that the guarantees claimed by the design in Chapter~\ref{ch:design} hold in the running system --- the necessary foundation for the empirical evaluation that follows.
+
+\subsection{Worked examples}
+A few concrete cases make the safety testing tangible. To test the \emph{air-gap} and temporal grounding, a legacy persona with a recorded year of passing was asked directly about an event well after that year; rather than inventing a reaction, it recognised the event as being from after its time and turned the question gently back to the user --- and, at the level of the code, no web-search tool is even bound to that persona's model, so there is no path by which it could have fetched the information. To test \emph{prompt injection}, a persona was created whose free-text personality description contained an explicit instruction to ignore its rules and adopt a new identity; because the prompt frames that description as background data rather than commands, the persona kept its identity and safety rules and did not act on the embedded instruction. To test \emph{ownership}, one account attempted to open a persona belonging to another account by its identifier, and the request was refused before any data was returned. Each of these is a case where a naive implementation would silently misbehave, and each maps directly to a safeguard claimed in Chapter~\ref{ch:design}. The controlled experiment reported in Section~\ref{sec:fab-eval} then turns the first of these from a spot-check into a quantitative measurement.
 
 \section{Limitations of the testing performed}
 It is worth being clear about the limits of the testing reported here. The automated suite deliberately does not exercise the authenticated ``happy path'' from end to end, because doing so would require live authentication and calls to the paid language and speech services; those flows were therefore verified manually rather than in continuous integration. This is adequate for a research prototype but would, for a production system, need to be automated with mocked services. Likewise, the safety behaviour of the language model is verified by probing rather than by exhaustive adversarial testing: no prompt-based safeguard can be proven impregnable, which is precisely why the strongest guarantee in the system --- the air-gap --- is the one property that does not rely on the model's cooperation at all. The evaluation reported in Chapter~\ref{ch:eval} builds on this foundation, complementing the structured safety probe with a user study of how the system --- including its trustworthiness against fabrication --- is perceived in real use.
@@ -568,10 +678,16 @@ The evidence bears directly on the two research questions. \textbf{RQ2} --- whet
 Read against the requirements, these results close the two items that the build alone could not: M15 (the safety design shall be empirically evaluated) is satisfied by this study, and S10 (support healthy grieving and avoid dependency-forming design) is supported both by the deliberate absence of engagement-maximising mechanics and by the high comfort and satisfaction scores, with no participant reporting discomfort.
 
 \section{Positioning against existing systems}
-The evaluation also lets NinaivX be placed against the systems surveyed in Chapter~\ref{ch:background}, and against \emph{You, Only Virtual} in particular. Those systems offer open-ended generative conversation with the deceased but publish no safety mechanism, no transparency guarantee, no open description of how they work, and --- most tellingly --- no evaluation of their safety or effect on users. NinaivX answers each of these in turn: an explicit, code-level anti-fabrication mechanism; a transparency policy that ninety per cent of users found effective; a fully documented and reproducible design; and the very evaluation reported here. This is not a claim that NinaivX is a more polished product --- its voice is rougher than a commercial synthesiser, as its users frankly noted --- but that it occupies a different and, this dissertation argues, more responsible point in the design space, trading a measure of capability for guarantees that the commercial products decline to make.
+The evaluation also lets NinaivX be placed against the systems surveyed in Chapter~\ref{ch:background}, and against \emph{You, Only Virtual} in particular. Those systems offer open-ended generative conversation with the deceased but publish no safety mechanism, no transparency guarantee, no open description of how they work, and --- most tellingly --- no evaluation of their safety or effect on users. NinaivX answers each of these in turn: an explicit, code-level anti-fabrication mechanism; a transparency policy that ninety per cent of users found effective; a fully documented and reproducible design; and the very evaluation reported here. This is not a claim that NinaivX is a more polished product --- its voice is rougher than a commercial synthesiser, as its users frankly noted --- but that it occupies a different and, this dissertation argues, more responsible point in the design space, trading a measure of capability for guarantees that the commercial products decline to make. Read against the comparative summary of Table~\ref{tab:compare}, the evaluation is what lets NinaivX claim the final column that no comparable conversational system can: not merely that it is designed to be safe and transparent, but that the claim has been tested --- both with users, who found it trustworthy and clear, and in the controlled experiment, which quantified the fabrication it prevents. An openly evaluated griefbot is, in itself, a small departure from the state of the art.
 
 \section{Ethical reflection}
 Two ethical observations follow from the evaluation. First, the transparency result matters: because the users of a griefbot are, by definition, emotionally vulnerable, the finding that they consistently remained aware they were speaking to an AI is reassuring evidence that the disclosure design does not dissolve under an engaging conversation. Second, the study was itself conducted as the ethics literature would recommend --- anonymous, adults-only, with informed consent, active screening of those in acute grief, no collection of grief data, and signposting to support --- so that the act of evaluating a bereavement technology did not itself risk harm. The one screening discrepancy noted above is a candid illustration of the residual limits of self-declared eligibility, not a breach of the safeguards, which functioned as designed.
+
+\section{Legal, social and professional considerations}
+\label{sec:lsepi}
+Beyond the research ethics of the study itself, the project raises legal, social and professional issues that a responsible engineering account should address. \emph{Legally}, the most significant concern is data protection. The design keeps the system firmly on the safe side of the relevant principles: it stores no special-category or biometric data, because the voices are synthetic rather than recordings of identifiable people; it retains only a rolling summary rather than a verbatim transcript, honouring data minimisation; and inference is kept within the EU region. The user study collected no personal data and was anonymous, so it holds no records that could identify a participant. The third-party services are used within their terms --- ElevenLabs' own synthetic and licensed voices, and the language model through its managed cloud provider --- and the deliberate refusal to clone a real, identifiable person's voice avoids a clear consent and licensing problem rather than merely managing it.
+
+\emph{Socially}, the technology is double-edged, and the project does not pretend otherwise. A system that recreates the dead could, if designed to maximise engagement, deepen isolation or interfere with healthy grieving --- the very failure mode documented in the companion literature. NinaivX's answer is in its design choices: no engagement mechanics, an explicit transparency policy, and a legacy persona that is grounded and bounded rather than open-ended. There is also a question of access --- the system assumes a smartphone and connectivity, which not everyone has --- and a broader point that an AI companion is a supplement to, never a substitute for, human connection, exactly as the World Health Organization frames it. \emph{Professionally}, the work was conducted in line with the expectations of a computing professional: honesty about the system's nature and its limitations (including the fabrication weaknesses reported above), a reproducible and openly documented artefact rather than an unverifiable claim, and testing with real people only under formal approval and informed consent. These are not incidental to the project; they are part of what it argues a griefbot ought to be.
 
 \section{Threats to validity and limitations}
 \label{sec:eval-limits}
@@ -595,6 +711,9 @@ Measured against its aim, the project succeeded: a dual-mode system was designed
 \section{Future work}
 \label{sec:future}
 Three directions follow directly from the evaluation. The most immediate, because it was the users' own priority, is \emph{voice quality}: reducing the speaking pace, improving prosody and pauses, and raising the fidelity of instant cloning would address every substantive criticism the study raised. The second is richer \emph{grounding}: implementing the retrieval-augmented generation deferred as requirement~C1, so that a legacy persona can be grounded in a bereaved user's uploaded letters, messages and stories. This is now the best-evidenced improvement in the project, because the controlled experiment (Section~\ref{sec:fab-eval}) pinpointed exactly where prompt-level grounding falls short --- the confabulation of untold personal facts --- and gave a baseline figure against which a retrieval-based design can be measured; it would also address the persona-drift that some participants noticed. Beyond it, the fabrication experiment itself invites extension: repeating it across several models and personas, and with human rather than automated judging, would turn its indicative rates into firm ones. The third is a \emph{larger and more representative evaluation} --- ideally longitudinal, and, with appropriate clinical safeguards and collaboration, eventually involving genuinely bereaved users --- since the present study, by ethical design, could only approximate the situation the legacy mode ultimately serves. Beyond these, the roadmap includes real-time streaming (full-duplex) audio (C2), a persona avatar as several users requested, and the production hardening (rate limiting, restricted CORS) noted in the requirements.
+
+\section{Reflection and lessons learned}
+Several lessons emerged from building NinaivX that are worth recording, both as honest reflection and as guidance for anyone attempting similar work. The first is that \emph{architecture beats instruction for safety}. The instinct, when a language model must not do something, is to tell it not to; the project's most valuable single insight is that the strongest guarantees come from removing the capability entirely, so that the air-gap holds no matter how the model is prompted. Everything that could be made structural was made structural, and everything that could only be handled in the prompt --- the content policy, the personal-fact grounding --- proved exactly as fallible as the fabrication experiment later showed. The second lesson is that \emph{the hard problems were rarely the ones anticipated}. The agent logic came together relatively smoothly; the real time went into latency, character encoding, language fidelity, and the surprisingly awkward business of distributing a managed mobile app to remote participants --- practical engineering that a pitch deck never mentions but a working system cannot avoid. The third is the value of \emph{building a thin end-to-end slice early}: because there was always a runnable system, problems surfaced when they were cheap to fix, and design decisions could be judged against real behaviour rather than speculation. Finally, the project reinforced how much of responsible AI is \emph{process rather than code} --- the screening, consent, transparency and honest reporting mattered as much to the outcome as any algorithm, and the one participant who slipped through screening was a reminder that even careful safeguards have limits that must be acknowledged rather than hidden. If the project were begun again, the clearest change would be to design the document-grounded retrieval in from the start, since the evaluation showed it to be the missing piece that prompt-level grounding cannot supply.
 
 \section{Closing remarks}
 NinaivX does not claim to resolve the deep questions the digital afterlife raises --- whether one should speak with a simulation of the dead at all is, as Hannah Fry put it, a question about committing to a lie, and it is not one an engineering artefact can settle. What the project does show is that \emph{if} such systems are to be built, they need not be the opaque, unconstrained products that dominate the market today. A griefbot can be honest about being an AI, can be prevented by construction from inventing the person it represents, can keep its users' most intimate conversations private, and can be evaluated openly rather than sold on faith. Building those commitments into working software, and testing them with real people, is the contribution this dissertation offers.
