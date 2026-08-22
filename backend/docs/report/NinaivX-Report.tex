@@ -41,13 +41,16 @@
     \caption{#2}\label{#3}
   \end{figure}}
 
-% Renders figures/<file> if it exists, else a labelled placeholder box, so the
+% Renders the image if it exists (checking BOTH figures/ and the project root,
+% so it works wherever you upload it), else a labelled placeholder box, so the
 % document always compiles and auto-upgrades the moment you drop the file in.
 % Usage: \imgorph{file.png}  or  \imgorph[0.45\linewidth]{file.png}
 \newcommand{\imgorph}[2][\linewidth]{%
   \IfFileExists{figures/#2}%
-    {\includegraphics[width=#1]{#2}}%
-    {\fbox{\parbox[c][3.6cm][c]{#1}{\centering\itshape [\,add\\ \texttt{figures/#2}\,]}}}}
+    {\includegraphics[width=#1]{figures/#2}}%
+    {\IfFileExists{#2}%
+      {\includegraphics[width=#1]{#2}}%
+      {\fbox{\parbox[c][3.6cm][c]{\dimexpr#1-2\fboxsep-2\fboxrule\relax}{\centering\itshape [\,add \texttt{#2}\\ (in the \texttt{figures/} folder)\,]}}}}}
 
 \begin{document}
 
