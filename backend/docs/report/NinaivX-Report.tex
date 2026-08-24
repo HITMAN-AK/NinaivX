@@ -372,7 +372,7 @@ Reproducibility & The system should be documented and rebuildable by a third par
 
 \section{Ethical and safety requirements}
 \label{sec:ethics-req}
-Because the subject matter is sensitive, the project's ethical stance is itself a source of requirements, and it operates at two levels. First, the \emph{application itself uses synthetic voices and stores no real biometric data}: the ready-made voices offered in the app are ElevenLabs' own synthetic or professionally licensed voices, used under the provider's terms of service and not recordings of any identifiable individual, and the voice-cloning feature is demonstrated on AI-generated samples rather than on a real person's voice. This is a deliberate choice, because a real individual's voice is biometric personal data whose use would require separate consent and licensing. Second, because the system is ultimately evaluated with real people, a \emph{user study was designed and received formal ethical approval from the University of Sheffield} (reference~076699). That study is remote and anonymous, restricted to adults --- the eighteen-or-over rule being enforced in the application itself --- obtains informed consent and screens out anyone in acute grief, collects only usability and perception feedback rather than any personal grief data, and signposts sources of support. Taken together, these commitments --- synthetic voices in the build, an ethically approved and anonymous user evaluation, air-gapping against fabrication, per-user isolation (M11), summary-only memory (C5 omitted by design), and explicit AI transparency (S9) --- translate several recommendations from the ethics literature \cite{hollanek2024griefbots,ohman2018ethical} into concrete engineering and process constraints, and they shape the design presented next.
+Because the subject matter is sensitive, the project's ethical stance is itself a source of requirements, and it operates at two levels. First, the \emph{application itself uses synthetic voices and stores no real biometric data}: the ready-made voices offered in the app are ElevenLabs' own synthetic or professionally licensed voices, used under the provider's terms of service and not recordings of any identifiable individual, and the voice-cloning feature is demonstrated on AI-generated samples rather than on a real person's voice. This is a deliberate choice, because a real individual's voice is biometric personal data whose use would require separate consent and licensing. Second, because the system is ultimately evaluated with real people, a \emph{user study was designed and received formal ethical approval from the University of Sheffield} (reference~076699; the protocol is summarised in Appendix~\ref{app:ethics}). That study is remote and anonymous, restricted to adults --- the eighteen-or-over rule being enforced in the application itself --- obtains informed consent and screens out anyone in acute grief, collects only usability and perception feedback rather than any personal grief data, and signposts sources of support. Taken together, these commitments --- synthetic voices in the build, an ethically approved and anonymous user evaluation, air-gapping against fabrication, per-user isolation (M11), summary-only memory (C5 omitted by design), and explicit AI transparency (S9) --- translate several recommendations from the ethics literature \cite{hollanek2024griefbots,ohman2018ethical} into concrete engineering and process constraints, and they shape the design presented next.
 
 \section{Requirements summary and traceability}
 In total the specification comprises fifteen must-have requirements, ten should-have, five could-have and five won't-have items. All fifteen must-haves are met: the fourteen build requirements are implemented, and the empirical evaluation of the safety design (M15) was carried out through the ethics-approved user study reported in Chapter~\ref{ch:eval}. All ten should-haves are likewise met, including the grief-appropriate, non-dependency-forming design (S10), which is realised in the design and supported by that study. Crucially, every one of the nine gaps identified in the literature (G1--G9) is traceable to at least one requirement, so that the scope of the system answers directly to the shortcomings it set out to address, and no requirement exists without a reason. The chapters that follow describe how these requirements were realised in the design, implementation and testing of the system.
@@ -606,7 +606,7 @@ The design makes two kinds of claim, and each demands a different kind of eviden
 
 \section{User-study method}
 \label{sec:eval-method}
-The study was designed to measure how adults perceive NinaivX after using it, and it was conducted under the formal ethical approval described in Section~\ref{sec:ethics-req} (University of Sheffield, reference~076699). It was deliberately lightweight and remote so that participants could take part on their own devices, in their own language, and anonymously. Recruitment was by open invitation; each participant installed the application through the free Expo~Go client using the stable link described in Section~\ref{sec:challenges}, created their own account and at least one persona, held text and, where possible, voice conversations, and then completed an anonymous online questionnaire.
+The study was designed to measure how adults perceive NinaivX after using it, and it was conducted under the formal ethical approval described in Section~\ref{sec:ethics-req} (University of Sheffield, reference~076699). It was deliberately lightweight and remote so that participants could take part on their own devices, in their own language, and anonymously. Recruitment was by open invitation; each participant installed the application through the free Expo~Go client using the stable link described in Section~\ref{sec:challenges}, created their own account and at least one persona, held text and, where possible, voice conversations, and then completed an anonymous online questionnaire (reproduced in full in Appendix~\ref{app:questionnaire}).
 
 The questionnaire opened with an information and consent section that confirmed eligibility (eighteen or over; not currently in acute grief or bereavement support), reiterated that every persona is an AI recreation, obtained consent for the voice-cloning rights declaration where relevant, and confirmed voluntary participation. The main instrument was a twelve-item block rated on a five-point Likert scale (from \emph{strongly disagree} to \emph{strongly agree}), covering set-up and responsiveness, conversational naturalness and believability, language and voice quality, emotional appropriateness, transparency, trust against fabrication, comfort, perceived usefulness, and overall satisfaction. A single free-text question invited suggestions for improvement. No personal or grief-related data were collected, and participants were signposted to bereavement and mental-health support both before and after the study. Responses were analysed with simple descriptive statistics --- the mean and the proportion of respondents agreeing or strongly agreeing with each statement --- appropriate to the sample size, alongside a thematic reading of the free-text comments.
 
@@ -843,5 +843,59 @@ The following abbreviations are used in this dissertation. Key terms are also de
   \item[STT] Speech-to-Text.
   \item[TTS] Text-to-Speech.
 \end{description}
+
+\chapter{Ethics approval and study protocol}
+\label{app:ethics}
+The user evaluation reported in Chapter~\ref{ch:eval} was reviewed and approved through the University of Sheffield's ethics review process (application reference~076699) before any participant was recruited. This appendix summarises the approved protocol and the safeguards applied. The full participant information sheet, consent form and data-management plan were prepared as separate study documents.
+
+\textbf{Study design.} The study was remote and anonymous: participants took part on their own devices, in their own time and language, by installing the application and then completing an online questionnaire (Appendix~\ref{app:questionnaire}). No session was observed or recorded, and no audio or conversation content was collected.
+
+\textbf{Eligibility and screening.} Participation was restricted to adults aged eighteen or over. Because the subject matter concerns bereavement, the study also screened out anyone currently experiencing acute or recent grief, or currently receiving bereavement or mental-health support. Both criteria were self-declared as part of the consent section.
+
+\textbf{Informed consent.} Before taking part, each participant confirmed a set of consent and eligibility statements (reproduced in Appendix~\ref{app:questionnaire}), including an explicit acknowledgement that every persona is an AI recreation rather than a real person, and that participation was voluntary.
+
+\textbf{Data handling.} The study collected no personal, identifying or grief-related data --- only anonymous usability and perception responses. As a result, no record held can identify a participant. This is consistent with the application's own privacy stance, which stores no real biometric data and retains only a rolling conversation summary rather than a transcript, with inference kept within the EU region.
+
+\textbf{Participant support.} Sources of support were signposted both before and after the study, namely the Samaritans (free, 24/7, 116~123), Cruse Bereavement Support (0808~808~1677), and the University of Sheffield's student support and counselling services. Participants were advised to stop if they felt affected.
+
+\textbf{Right to withdraw.} Participation was voluntary and could be stopped at any point before submission; participants were told this explicitly. Because responses are anonymous, a submitted response cannot subsequently be identified for individual withdrawal, and this was made clear at the point of consent.
+
+\chapter{User-study questionnaire}
+\label{app:questionnaire}
+This appendix reproduces the questionnaire administered in the user study of Chapter~\ref{ch:eval}. Participants first installed and used the application, then completed the following anonymous questionnaire. The instrument is reproduced here so that the dissertation makes sense without reference to the live form.
+
+\textbf{Introduction shown to participants.} Participants were told that NinaivX is a privacy-first voice AI created for an MSc Artificial Intelligence dissertation at the University of Sheffield; that it lets them hold a text or voice conversation with an AI persona (a ``Companion,'' or a ``Legacy'' recreation of a loved one who has passed away); that every persona is clearly an AI recreation, not a real person; that the study would take about fifteen to twenty minutes; and that their responses are anonymous.
+
+\textit{Section 1 --- Consent and eligibility.} Each of the following required a response before continuing:
+\begin{enumerate}[itemsep=2pt]
+  \item I confirm that I am 18 years of age or older. \emph{(Yes / No)}
+  \item I confirm that I am NOT currently experiencing acute or recent grief, and am NOT currently receiving bereavement or mental-health support. \emph{(Yes / No)}
+  \item I understand that every persona in NinaivX is an AI recreation, not a real person, and that all replies are AI-generated. \emph{(Yes / No)}
+  \item If I upload a voice recording to clone a voice, I confirm it is the intended person's voice and that I have the right to use it. \emph{(Yes / Not applicable)}
+  \item I understand my participation is voluntary and anonymous, that I can stop at any time, and I agree to take part. \emph{(Yes, I agree to take part / No)}
+\end{enumerate}
+
+\textit{Section 2 --- Your experience.} Each statement was rated on a five-point scale from \emph{Strongly disagree} to \emph{Strongly agree}:
+\begin{enumerate}[itemsep=2pt]
+  \item The app was easy to set up and use.
+  \item The app responded quickly enough during the conversation.
+  \item The conversation felt natural and coherent.
+  \item The persona behaved believably, in keeping with the description I gave.
+  \item The app spoke my chosen language well.
+  \item The synthetic/spoken voice sounded natural.
+  \item The persona's responses felt emotionally appropriate and respectful.
+  \item It was always clear to me that I was talking to an AI.
+  \item I would trust this app to behave safely and not ``make things up'' about a real person.
+  \item I felt comfortable using the app.
+  \item I can see this app being helpful for companionship or remembrance.
+  \item Overall, I was satisfied with the experience.
+\end{enumerate}
+
+\textit{Section 3 --- Open feedback.}
+\begin{itemize}[itemsep=2pt]
+  \item What would you improve? (e.g.\ features you would like to see) \emph{(free text, optional)}
+\end{itemize}
+
+\textbf{Support information shown to participants.} The questionnaire closed by repeating the sources of support listed in Appendix~\ref{app:ethics} and thanking participants for taking part.
 
 \end{document}
