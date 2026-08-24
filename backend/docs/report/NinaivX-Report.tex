@@ -12,7 +12,9 @@
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage{lmodern}
-\usepackage[margin=1in]{geometry}
+% Binding-friendly margins per the departmental guidelines (left 37mm for the
+% binding edge, right 25mm), with room for the running header.
+\usepackage[top=25mm,bottom=25mm,left=37mm,right=25mm,headheight=15pt,headsep=10pt]{geometry}
 \usepackage{amsmath}
 \usepackage{amssymb}   % \checkmark, \circleddash, \lozenge used in the status tables
 \usepackage{graphicx}
@@ -25,11 +27,31 @@
 \usepackage{enumitem}
 \usepackage{float}
 \usepackage[hidelinks]{hyperref}
+\usepackage{fancyhdr}
 
 \graphicspath{{figures/}}
 \captionsetup{font=small,labelfont=bf}
-\onehalfspacing
+% Line spacing per the guidelines (single/1.1/1.2): 1.15.
+\setstretch{1.15}
 \setlength{\parskip}{0.4em}
+
+% Running header: chapter (or appendix) title centred at the top of every page,
+% page number centred at the foot, so all pages are numbered.
+\pagestyle{fancy}
+\fancyhf{}
+\makeatletter
+\renewcommand{\chaptermark}[1]{\markboth{\@chapapp\ \thechapter.\ #1}{}}
+\makeatother
+\fancyhead[C]{\small\nouppercase{\leftmark}}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0pt}
+% Chapter-opening pages (plain style) still get a centred page number.
+\fancypagestyle{plain}{%
+  \fancyhf{}%
+  \fancyfoot[C]{\thepage}%
+  \renewcommand{\headrulewidth}{0pt}%
+}
 
 % Convenience command for the (very common) missing-figure placeholders.
 % Usage: \placeholder{description}{caption}{fig:label}
@@ -83,6 +105,10 @@ Department of Computer Science\par}
 {\normalsize \today\par}
 \end{titlepage}
 
+% Front matter numbered in roman; plain style (page number only, no chapter header).
+\pagenumbering{roman}
+\pagestyle{plain}
+
 %=====================================================================
 % ABSTRACT
 %=====================================================================
@@ -116,6 +142,11 @@ I would like to thank my supervisor for their guidance throughout this project, 
 \tableofcontents
 \listoffigures
 \listoftables
+
+% Body numbered in arabic from Chapter 1; running chapter header restored.
+\cleardoublepage
+\pagenumbering{arabic}
+\pagestyle{fancy}
 
 %=====================================================================
 % CHAPTER 1 — INTRODUCTION
@@ -357,7 +388,7 @@ Three principles shape the design of NinaivX, each answering a gap from Chapter~
 
 \section{Dual-mode architecture}
 \label{sec:arch}
-At the centre of the system is a compiled agent graph that receives a user's message and routes it, according to the persona's type, to one of two persona nodes. Figure~\ref{fig:arch} shows the overall architecture: the mobile client speaks only to the API layer, which authenticates the request, confirms that the persona belongs to the requesting user, and hands control to the agent. The agent, in turn, calls the language model and --- for the companion only --- a web-search tool, drawing the persona's identity and memory from the database.
+At the centre of the system is a compiled agent graph that receives a user's message and routes it, according to the persona's type, to one of two persona nodes. Figure~\ref{fig:arch} shows the overall architecture: the mobile client speaks only to the API (application programming interface) layer, which authenticates the request, confirms that the persona belongs to the requesting user, and hands control to the agent. The agent, in turn, calls the language model and --- for the companion only --- a web-search tool, drawing the persona's identity and memory from the database.
 
 \begin{figure}[H]
 \centering
@@ -786,5 +817,31 @@ NinaivX does not claim to resolve the deep questions the digital afterlife raise
 \bibitem{lindemann2022deathbots} N.~F.~Lindemann, ``The ethics of `deathbots','' \emph{Science and Engineering Ethics}, vol.~28, no.~60, 2022.
 
 \end{thebibliography}
+
+%=====================================================================
+% APPENDICES
+%=====================================================================
+\appendix
+
+\chapter{Glossary of abbreviations}
+\label{app:glossary}
+The following abbreviations are used in this dissertation. Key terms are also defined at their first use in the main text.
+
+\begin{description}[leftmargin=6.5em,style=nextline,itemsep=2pt]
+  \item[AI] Artificial Intelligence.
+  \item[API] Application Programming Interface.
+  \item[CORS] Cross-Origin Resource Sharing.
+  \item[ER / ERD] Entity--Relationship (Diagram).
+  \item[HTTP] HyperText Transfer Protocol.
+  \item[IDOR] Insecure Direct Object Reference.
+  \item[JSON] JavaScript Object Notation.
+  \item[JWT] JSON Web Token.
+  \item[LLM] Large Language Model.
+  \item[MoSCoW] Must have, Should have, Could have, Won't have (a requirement-prioritisation scheme).
+  \item[RAG] Retrieval-Augmented Generation.
+  \item[ReAct] Reason--Act (an agent reasoning-and-tool-use pattern).
+  \item[STT] Speech-to-Text.
+  \item[TTS] Text-to-Speech.
+\end{description}
 
 \end{document}
