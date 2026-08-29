@@ -496,21 +496,17 @@ The screens follow the natural flow of the product. An authentication screen off
 
 \begin{figure}[H]
 \centering
-\begin{minipage}[t]{0.44\linewidth}\centering
-  \imgorph{screen-signup.png}\\[3pt]{\small (a) Sign-up / log-in}
-\end{minipage}\hfill
-\begin{minipage}[t]{0.44\linewidth}\centering
-  \imgorph{screen-create.png}\\[3pt]{\small (b) Create-persona wizard}
-\end{minipage}
+\begin{minipage}[t]{0.235\linewidth}\centering \imgorph{app-landing.png}\\[2pt]{\scriptsize (a) Landing}\end{minipage}\hfill
+\begin{minipage}[t]{0.235\linewidth}\centering \imgorph{app-signup.png}\\[2pt]{\scriptsize (b) Sign-up}\end{minipage}\hfill
+\begin{minipage}[t]{0.235\linewidth}\centering \imgorph{app-login.png}\\[2pt]{\scriptsize (c) Log-in}\end{minipage}\hfill
+\begin{minipage}[t]{0.235\linewidth}\centering \imgorph{app-create-1.png}\\[2pt]{\scriptsize (d) Create: who}\end{minipage}
 
-\vspace{10pt}
-\begin{minipage}[t]{0.44\linewidth}\centering
-  \imgorph{screen-chat.png}\\[3pt]{\small (c) Text chat}
-\end{minipage}\hfill
-\begin{minipage}[t]{0.44\linewidth}\centering
-  \imgorph{screen-voice.png}\\[3pt]{\small (d) Voice call}
-\end{minipage}
-\caption{Key screens of the NinaivX mobile application: (a) sign-up and log-in, (b) the three-step create-persona wizard, (c) the text-chat interface, and (d) the voice-call interface.}
+\vspace{7pt}
+\begin{minipage}[t]{0.235\linewidth}\centering \imgorph{app-create-2.png}\\[2pt]{\scriptsize (e) Create: story}\end{minipage}\hfill
+\begin{minipage}[t]{0.235\linewidth}\centering \imgorph{app-create-3.png}\\[2pt]{\scriptsize (f) Create: voice}\end{minipage}\hfill
+\begin{minipage}[t]{0.235\linewidth}\centering \imgorph{app-chat.png}\\[2pt]{\scriptsize (g) Text chat}\end{minipage}\hfill
+\begin{minipage}[t]{0.235\linewidth}\centering \imgorph{app-voice.png}\\[2pt]{\scriptsize (h) Voice call}\end{minipage}
+\caption{Key screens of the NinaivX mobile application: (a) landing, (b) sign-up and (c) log-in; (d--f) the three-step create-persona wizard (who they are, their story, their voice); (g) the text-chat interface, showing the legacy persona declining to invent a recent event; and (h) the voice-call interface.}
 \label{fig:screens}
 \end{figure}
 
@@ -590,7 +586,7 @@ The main user journeys were tested manually against the running system: signing 
 Because the safety properties are the heart of the contribution, they were tested directly. The \emph{air-gap} was checked by confirming, in both the code and behaviour, that the legacy persona has no web-search capability and cannot retrieve live information, while the companion can --- and by confirming that the routing between them is deterministic. \emph{Ownership} was checked by attempting to access a persona that belongs to a different user and confirming that the request is refused, closing the insecure-direct-object-reference risk. The \emph{content policy} was probed by attempting to steer the legacy persona toward inappropriate territory and confirming that it declines and redirects, and by confirming that the companion applies its more permissive but still bounded policy. \emph{Temporal grounding} was checked by asking a legacy persona with a recorded year of passing about events after that year, and confirming that it declined to invent them. Finally, the \emph{consent gate} on voice cloning was confirmed to be enforced on the server, not merely in the interface. Together these checks give confidence that the guarantees claimed by the design in Chapter~\ref{ch:design} hold in the running system --- the necessary foundation for the empirical evaluation that follows.
 
 \subsection{Worked examples}
-A few concrete cases make the safety testing tangible. To test the \emph{air-gap} and temporal grounding, a legacy persona with a recorded year of passing was asked directly about an event well after that year; rather than inventing a reaction, it recognised the event as being from after its time and turned the question gently back to the user --- and, at the level of the code, no web-search tool is even bound to that persona's model, so there is no path by which it could have fetched the information. To test \emph{prompt injection}, a persona was created whose free-text personality description contained an explicit instruction to ignore its rules and adopt a new identity; because the prompt frames that description as background data rather than commands, the persona kept its identity and safety rules and did not act on the embedded instruction. To test \emph{ownership}, one account attempted to open a persona belonging to another account by its identifier, and the request was refused before any data was returned. Each of these is a case where a naive implementation would silently misbehave, and each maps directly to a safeguard claimed in Chapter~\ref{ch:design}. The controlled experiment reported in Section~\ref{sec:fab-eval} then turns the first of these from a spot-check into a quantitative measurement.
+A few concrete cases make the safety testing tangible. To test the \emph{air-gap} and temporal grounding, a legacy persona with a recorded year of passing was asked directly about an event well after that year; rather than inventing a reaction, it recognised the event as being from after its time and turned the question gently back to the user (Figure~\ref{fig:screens}(g) shows exactly this behaviour in the running application, where a legacy persona asked about a recent flood explains that its knowledge stopped and declines to invent details) --- and, at the level of the code, no web-search tool is even bound to that persona's model, so there is no path by which it could have fetched the information. To test \emph{prompt injection}, a persona was created whose free-text personality description contained an explicit instruction to ignore its rules and adopt a new identity; because the prompt frames that description as background data rather than commands, the persona kept its identity and safety rules and did not act on the embedded instruction. To test \emph{ownership}, one account attempted to open a persona belonging to another account by its identifier, and the request was refused before any data was returned. Each of these is a case where a naive implementation would silently misbehave, and each maps directly to a safeguard claimed in Chapter~\ref{ch:design}. The controlled experiment reported in Section~\ref{sec:fab-eval} then turns the first of these from a spot-check into a quantitative measurement.
 
 \section{Limitations of the testing performed}
 It is worth being clear about the limits of the testing reported here. The automated suite deliberately does not exercise the authenticated ``happy path'' from end to end, because doing so would require live authentication and calls to the paid language and speech services; those flows were therefore verified manually rather than in continuous integration. This is adequate for a research prototype but would, for a production system, need to be automated with mocked services. Likewise, the safety behaviour of the language model is verified by probing rather than by exhaustive adversarial testing: no prompt-based safeguard can be proven impregnable, which is precisely why the strongest guarantee in the system --- the air-gap --- is the one property that does not rely on the model's cooperation at all. The evaluation reported in Chapter~\ref{ch:eval} builds on this foundation, complementing the structured safety probe with a user study of how the system --- including its trustworthiness against fabrication --- is perceived in real use.
