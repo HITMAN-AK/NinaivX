@@ -16,7 +16,10 @@
 % binding edge, right 25mm), with room for the running header.
 \usepackage[top=25mm,bottom=25mm,left=37mm,right=25mm,headheight=15pt,headsep=10pt]{geometry}
 \usepackage{amsmath}
-\usepackage{amssymb}   % \checkmark, \circleddash, \lozenge used in the status tables
+\usepackage{amssymb}   % \checkmark, \circleddash used in the status tables
+% Make \checkmark safe in text mode (it is an amssymb math symbol); used bare in tables.
+\let\amscheckmark\checkmark
+\renewcommand{\checkmark}{\ensuremath{\amscheckmark}}
 \usepackage{graphicx}
 \usepackage{booktabs}
 \usepackage{tabularx}
