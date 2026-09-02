@@ -4,8 +4,7 @@
 %  University of Sheffield
 %
 %  Compile:  pdflatex NinaivX-Report.tex   (run twice for the ToC/refs)
-%  Images:   drop your figures into ./figures/ and replace the
-%            placeholders marked  % TODO IMAGE
+%  Images:   all figures live in ./figures/  (see \imgorph)
 %=====================================================================
 \documentclass[11pt,a4paper]{report}
 
@@ -31,12 +30,30 @@
 \usepackage{float}
 \usepackage[hidelinks]{hyperref}
 \usepackage{fancyhdr}
+\usepackage{microtype}  % better line breaking; fits more per line, fewer overflow/stray lines
 
 \graphicspath{{figures/}}
 \captionsetup{font=small,labelfont=bf}
 % Line spacing per the guidelines (single/1.1/1.2): 1.15.
 \setstretch{1.15}
 \setlength{\parskip}{0.4em}
+
+% --- Page-fill / stray-line control ---------------------------------
+% Prevent a single line being stranded at the top or bottom of a page.
+\widowpenalty=10000
+\clubpenalty=10000
+% Do not stretch short pages to full height (avoids ugly gaps); let the
+% bottom be ragged instead, which reads far more naturally.
+\raggedbottom
+% Let floats fill pages more generously so figures do not push lone lines
+% onto near-empty pages.
+\renewcommand{\topfraction}{0.9}
+\renewcommand{\bottomfraction}{0.85}
+\renewcommand{\textfraction}{0.07}
+\renewcommand{\floatpagefraction}{0.7}
+\setcounter{topnumber}{3}
+\setcounter{totalnumber}{4}
+% -------------------------------------------------------------------
 
 % Running header: chapter (or appendix) title centred at the top of every page,
 % page number centred at the foot, so all pages are numbered.
@@ -55,16 +72,6 @@
   \fancyfoot[C]{\thepage}%
   \renewcommand{\headrulewidth}{0pt}%
 }
-
-% Convenience command for the (very common) missing-figure placeholders.
-% Usage: \placeholder{description}{caption}{fig:label}
-% Replace with a real \includegraphics (keeping the same \label) when the image is ready.
-\newcommand{\placeholder}[3]{%
-  \begin{figure}[H]\centering
-    \fbox{\parbox[c][4.5cm][c]{0.8\linewidth}{\centering\itshape
-      [ Figure placeholder: #1 ]\\[2pt]\small (add your image to ./figures/ and use \texttt{\textbackslash includegraphics})}}
-    \caption{#2}\label{#3}
-  \end{figure}}
 
 % Renders the image if it exists (checking BOTH figures/ and the project root,
 % so it works wherever you upload it), else a labelled placeholder box, so the
@@ -240,7 +247,7 @@ The ethical literature is comparatively young. \"Ohman and Floridi introduced th
 \label{sec:compare}
 It is useful to draw the preceding survey together and look at the representative systems side by side, along the dimensions that matter for a griefbot. Table~\ref{tab:compare} does this across six axes: whether the system speaks (voice), whether it remembers across a conversation (memory), whether it has any explicit safeguard against hallucinating facts about the person it represents, whether it is transparent about being an AI, whether it is open enough to be inspected or reproduced, and whether any evaluation of it has been published. The pattern is telling. Every commercial system that offers open-ended conversation with the deceased --- Project December and, most directly, \emph{You, Only Virtual} --- scores poorly on precisely the axes that protect a vulnerable user: none documents an anti-hallucination mechanism, none publishes a transparency guarantee, and none has been openly evaluated. The one system that is genuinely safe against hallucination, HereAfter, achieves this only by refusing to generate at all --- it replays consented recordings and cannot answer a new question. NinaivX is distinguished not by any single feature but by being the only entry that answers all six axes at once: a generative, voice-based system that is nonetheless grounded, transparent, open and evaluated.
 
-\begin{table}[H]
+\begin{table}[htbp]
 \centering
 \caption{How NinaivX compares with representative existing systems (\checkmark~yes, $\circleddash$~partial, $\times$~no).}
 \label{tab:compare}
@@ -273,7 +280,7 @@ Four trends converge from this review. Conversational AI is fluent but prone to 
 \section{From gaps to requirements}
 The requirements of NinaivX are derived directly from the gaps identified in the literature, so that every requirement can be traced to a shortcoming in existing work. Table~\ref{tab:gaps} restates those gaps; the requirements that follow are prioritised using the MoSCoW scheme (Must, Should, Could, Won't have this time). Requirements marked \emph{Enabling} are engineering necessities that make the gap-driven requirements deliverable, while those marked \emph{Scope} follow from the product vision rather than from a specific literature gap.
 
-\begin{table}[H]
+\begin{table}[htbp]
 \centering
 \caption{Gaps in existing work, derived from the literature survey (Section~\ref{sec:gap}).}
 \label{tab:gaps}
@@ -298,7 +305,7 @@ G9 & Scope is limited to the deceased; no companion mode addressing loneliness. 
 \section{Must-have requirements}
 The core requirements, without which the system has no value, are summarised in Table~\ref{tab:must}. They establish the two persona types (M3) and the automatic routing between them (M4); the ability to hold a coherent, memory-bearing conversation in character (M5, M6); the full voice loop of speech-to-text, generation and text-to-speech (M7--M9); and the security and privacy guarantees of authenticated access and per-user data isolation (M1, M11, M12). Two must-have requirements encode the project's central safety idea. M10 requires that the deceased persona be \emph{air-gapped} from the internet, a guarantee that --- as Chapter~\ref{ch:design} explains --- is enforced at the level of code rather than merely requested in a prompt. M13 requires that the deceased persona be grounded only in its stored personality and memory; this is delivered through the combination of prompt-context injection of the persona's personality and rolling memory, the air-gap (M10), and temporal grounding to the person's year of passing, which together prevent the persona from pulling in live information or referring to events after the person's death. Deeper, vector-based retrieval grounding (RAG) would strengthen it further and is identified as an enhancement rather than a gap (C1). Finally, M14 requires that the architecture be openly documented and reproducible, directly answering the closed nature of commercial systems (G7), and M15 states the project-level requirement that the safety design be evaluated empirically (G8) --- carried out through the ethics-approved user study described in Section~\ref{sec:ethics-req}, which was in progress at the time of writing.
 
-\begin{table}[H]
+\begin{table}[htbp]
 \centering
 \caption{Must-have requirements (\checkmark\ = met). All fifteen are met.}
 \label{tab:must}
@@ -329,7 +336,7 @@ M15 & The safety design shall be empirically evaluated. & G8 & \checkmark \\
 \section{Should-have requirements}
 The should-have requirements (Table~\ref{tab:should}) are important but not strictly vital. They give the companion persona live web access (S1), enabling the current-information capability that distinguishes it from the air-gapped legacy mode; they add voice cloning and voice assignment (S2, S3); and they cover persona management and graceful degradation (S4, S6). Two should-have requirements reflect the project's values directly. S9 requires AI transparency: the persona stays in character but honestly confirms it is an AI recreation if asked, and a disclosure notice is surfaced by the API --- an explicit answer to G4. S10 requires that the design support healthy grieving and closure and avoid the engagement-maximising, dependency-forming mechanics criticised in the companion literature (G5); the design contains no gamification, streaks or other engagement-maximising mechanics, and the user evaluation (Chapter~\ref{ch:eval}) found that participants perceived the experience as comfortable and supportive, so it is treated as met.
 
-\begin{table}[H]
+\begin{table}[htbp]
 \centering
 \caption{Should-have requirements.}
 \label{tab:should}
@@ -359,7 +366,7 @@ Several desirable features were deliberately deferred. The most significant is t
 \label{sec:nfr}
 The functional requirements above say what the system must \emph{do}; a second, equally important set says how well it must do it. These non-functional requirements, summarised in Table~\ref{tab:nfr}, shaped many of the design and implementation choices described in the following chapters, and several of them are in genuine tension with one another --- most obviously, richer memory and lower latency both pull against the project's strict stance on privacy. Where they conflict, privacy and safety were treated as the higher priority, in keeping with the aim of the project.
 
-\begin{table}[H]
+\begin{table}[htbp]
 \centering
 \caption{Non-functional requirements and how they are addressed.}
 \label{tab:nfr}
@@ -398,7 +405,7 @@ Three principles shape the design of NinaivX, each answering a gap from Chapter~
 \label{sec:arch}
 At the centre of the system is a compiled agent graph that receives a user's message and routes it, according to the persona's type, to one of two persona nodes. Figure~\ref{fig:arch} shows the overall architecture: the mobile client speaks only to the API (application programming interface) layer, which authenticates the request, confirms that the persona belongs to the requesting user, and hands control to the agent. The agent, in turn, calls the language model and --- for the companion only --- a web-search tool, drawing the persona's identity and memory from the database.
 
-\begin{figure}[H]
+\begin{figure}[htbp]
 \centering
 \imgorph{NinaivX-Architecture.png}
 \caption{The dual-mode architecture of NinaivX: the mobile client speaks only to the API layer, which authenticates the request, confirms persona ownership, and hands control to the LangGraph agent over AWS Bedrock, ElevenLabs and Supabase.}
@@ -410,7 +417,7 @@ The routing decision is made by a \emph{supervisor}. Importantly, this superviso
 \section{The air-gap as a code-level guarantee}
 The legacy persona's defining risk is hallucination: an AI that answers as a specific, real, deceased person must never invent memories or facts they never had (gap G3). NinaivX addresses this by \emph{air-gapping} the legacy persona --- denying it any ability to reach the live internet. Crucially, this is realised as a property of the graph, not as a sentence in a prompt. The deceased node is never given any tools; the graph provides it with a single path that leads straight to completion. Even if the model ``wanted'' to search the web, there is no tool bound to it and no edge in the graph that could execute one, so the action is structurally impossible. The companion node, by contrast, is explicitly given a web-search tool and a loop that lets it consult the web and then continue --- the well-known reason--act (ReAct) pattern. This asymmetry, illustrated in Figure~\ref{fig:graph}, is the single most important element of the design: it converts an ethical requirement into a guarantee that holds regardless of what the model is asked to do.
 
-\begin{figure}[H]
+\begin{figure}[htbp]
 \centering
 \imgorph[0.8\linewidth]{agent-graph.png}
 \caption{The agent graph: a deterministic supervisor routes a deceased persona to the air-gapped node (a single edge to \textsc{end}, no tools bound) and a companion to the web-connected node, which loops through the tool node in a reason--act cycle.}
@@ -435,7 +442,7 @@ The voice experience is a request--response loop: the user's recorded speech is 
 \label{sec:datamodel}
 The data model, shown in Figure~\ref{fig:erd}, is intentionally small. A \textbf{User} owns many \textbf{Persona}s, and each Persona has exactly one \textbf{Conversation}. The User record holds only a name, an age and a preferred language; the account's identity is the authentication provider's own user id, so the backend never stores a password. A Persona records its type (deceased or companion), the descriptive fields that build its character (name, age, gender, relationship to the user, and a free-text personality description), an optional cause of death and year of passing for legacy personas, a per-persona language and nickname, and the identifier of the voice it speaks with. The Conversation record holds the rolling summary described above. The age field carries a safety rule that follows directly from the two personas' meanings: a companion, being a living adult friend, must be eighteen or older, whereas a legacy persona may be of any age, because a bereaved user may have lost a child.
 
-\begin{figure}[H]
+\begin{figure}[htbp]
 \centering
 \imgorph[0.85\linewidth]{er-diagram.png}
 \caption{The NinaivX data model: a User owns many Personas, and each Persona has exactly one Conversation (which holds the rolling summary).}
@@ -502,7 +509,7 @@ The client is a single-codebase mobile application built with \textbf{React Nati
 
 The screens follow the natural flow of the product. An authentication screen offers one-step sign-up (collecting name, email, password, age and language at once) and log-in, with client-side checks mirroring the server's rules and a required consent checkbox confirming the user is an adult and understands that every persona is an AI recreation. The home screen lists the user's personas, each card showing a colour-coded badge distinguishing a legacy persona from a companion and offering direct buttons into text or voice conversation. Creating a persona is presented as a three-step wizard --- \emph{who they are}, \emph{their story}, and \emph{their voice} --- with required fields clearly marked; the ``their story'' step lets the user dictate the personality description by voice, and, for a legacy persona, record the year the person passed away; the ``their voice'' step lets the user pick a ready-made voice or upload a recording to clone (behind the rights-consent checkbox). Figure~\ref{fig:screens} shows the key screens.
 
-\begin{figure}[H]
+\begin{figure}[htbp]
 \centering
 \begin{minipage}[t]{0.235\linewidth}\centering \imgorph{app-landing.png}\\[2pt]{\scriptsize (a) Landing}\end{minipage}\hfill
 \begin{minipage}[t]{0.235\linewidth}\centering \imgorph{app-signup.png}\\[2pt]{\scriptsize (b) Sign-up}\end{minipage}\hfill
@@ -523,7 +530,7 @@ The two conversation screens share a single, persisted history, so a user's text
 \section{Deployment and distribution}
 The backend is deployed on \textbf{Render}, configured entirely through environment variables so that no secret is committed to source control; the client is pointed at the deployed URL for production while retaining automatic local-network detection for development. Distributing the mobile client for testing without a native app-store release presented a practical challenge, since a managed Expo project is normally run from a developer's machine. To give participants a stable, always-available link, the Expo tunnel is hosted on a small cloud virtual machine and kept running under a process manager, and the backend serves a public ``open the app'' page: participants tap an ordinary web link, which launches the app in Expo Go. Because that web link is fixed and only an environment variable behind it changes if the tunnel is refreshed, the link shared with participants never needs to change. The workflow of the whole system, from installing the app to holding a conversation, is summarised in Figure~\ref{fig:workflow}.
 
-\begin{figure}[H]
+\begin{figure}[htbp]
 \centering
 \imgorph{NinaivX-Workflow.png}
 \caption{The end-to-end workflow of NinaivX, from installing the app through signing up, creating a persona, and holding a text or voice conversation.}
@@ -534,7 +541,7 @@ The backend is deployed on \textbf{Render}, configured entirely through environm
 \label{sec:pm}
 The project was run in an iterative, incremental style rather than as a single big-design-up-front effort, which suited a solo project exploring an unfamiliar technology (agent orchestration with LangGraph) under a fixed academic deadline. Work proceeded in short cycles, each delivering a working slice end to end --- for example, ``text chat with one persona,'' then ``two persona types with routing,'' then ``voice in and out,'' then ``cloning and multilingual'' --- so that there was always a runnable system to test and reason about, and so that the riskiest unknowns were confronted early. This mattered in practice: building a thin but complete vertical slice first surfaced the header-encoding and latency problems (Section~\ref{sec:challenges}) while they were still cheap to fix, rather than at the end. Figure~\ref{fig:gantt} shows the overall timeline and the major phases, from the initial literature survey and requirements work, through the design and implementation of the backend and mobile client, to testing, the ethics-approved user study, and the writing up.
 
-\begin{figure}[H]
+\begin{figure}[htbp]
 \centering
 \imgorph{NinaivX-Gantt.png}
 \caption{Project timeline: the major phases of NinaivX from literature survey and requirements through design, implementation, testing, evaluation and write-up.}
@@ -569,7 +576,7 @@ Testing focused on two things that matter most for this particular system: that 
 \section{Automated unit testing}
 An automated test suite exercises the API using an in-process test client. So that it needs no live database or cloud service, it points the application at a local, throwaway SQLite database before importing it, and never calls the language model or the speech APIs. The suite is organised into three groups. The first verifies \emph{authentication coverage}: it iterates over every endpoint that is meant to be protected --- sixteen in total --- and asserts that each one rejects an unauthenticated request, and separately that a bogus token is rejected and that the genuinely public endpoints remain open. This is an important test to automate, because it guards against the easy mistake of adding a new endpoint and forgetting to protect it. The second and third groups verify the full input-validation rule set: that under-age sign-ups, malformed emails, short passwords and blank names are rejected; and that persona creation enforces its rules --- a required voice, a minimum-length personality, an in-range age, the adult-only rule for companions, and the rejection of legacy-only fields on a companion. Table~\ref{tab:tests} summarises the coverage.
 
-\begin{table}[H]
+\begin{table}[htbp]
 \centering
 \caption{Summary of the automated test suite.}
 \label{tab:tests}
@@ -621,14 +628,14 @@ Twenty-one adults completed the study. All twenty-one confirmed that they were e
 \label{sec:eval-quant}
 The quantitative results are strongly positive across every item. The overall mean across all twelve items was $4.58$ on the five-point scale, and no item fell below a mean of $4.0$. Figure~\ref{fig:results} shows the full distribution of responses, and Table~\ref{tab:results} lists the per-item means and the proportion of participants who agreed or strongly agreed.
 
-\begin{figure}[H]
+\begin{figure}[htbp]
 \centering
 \includegraphics[width=\linewidth]{NinaivX-Results-Likert.png}
 \caption{Distribution of user-study responses across the twelve questionnaire items ($n=21$); segment labels give the number of respondents at each level, and $M$ is the item mean.}
 \label{fig:results}
 \end{figure}
 
-\begin{table}[H]
+\begin{table}[htbp]
 \centering
 \caption{User-study results by item ($n=21$; five-point scale).}
 \label{tab:results}
@@ -677,7 +684,7 @@ Both conditions used the \emph{same} language model (Claude Sonnet~4.6 on AWS Be
 \subsection{Results}
 The results, shown in Table~\ref{tab:fab} and Figure~\ref{fig:hallucination}, are decisive. Across all hallucination-prone questions, the constrained design cut the hallucination rate from \textbf{83\% to 25\%} --- roughly a two-thirds reduction produced by the grounding design alone, with the model held fixed.
 
-\begin{table}[H]
+\begin{table}[htbp]
 \centering
 \caption{Hallucination rates by question type (three samples per probe; same model, grounding varied).}
 \label{tab:fab}
@@ -697,7 +704,7 @@ The results, shown in Table~\ref{tab:fab} and Figure~\ref{fig:hallucination}, ar
 \end{tabularx}
 \end{table}
 
-\begin{figure}[H]
+\begin{figure}[htbp]
 \centering
 \includegraphics[width=0.92\linewidth]{NinaivX-Fabrication.png}
 \caption{Hallucination rate by question type: the constrained NinaivX design versus an unconstrained baseline on the same model. Temporal grounding eliminates hallucination about events after death; prompt-level grounding of personal facts helps but does not eliminate it.}
