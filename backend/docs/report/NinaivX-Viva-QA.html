@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>NinaivX — Viva Q&A Prep</title>
+<style>
+  @page { size: A4; margin: 14mm 15mm; }
+  * { box-sizing: border-box; }
+  body { font-family: "Segoe UI","Helvetica Neue",Arial,sans-serif; color:#1b2a33; font-size:10pt; line-height:1.4; margin:0; }
+  h1 { font-size:20pt; color:#2a6f6b; margin:0 0 2px; }
+  .sub { color:#555; font-size:9.5pt; margin-bottom:10px; }
+  .rules { background:#f2f8f7; border:1px solid #cfe3e1; border-radius:8px; padding:8px 12px; margin-bottom:14px; }
+  .rules b { color:#2a6f6b; }
+  .rules ol { margin:4px 0 0 18px; padding:0; }
+  .rules li { margin-bottom:2px; }
+  h2 { font-size:12.5pt; color:#fff; background:#2a6f6b; padding:4px 10px; border-radius:5px; margin:16px 0 8px; }
+  .qa { margin:0 0 9px; padding:0 0 8px; border-bottom:1px solid #eee; }
+  .q { font-weight:bold; color:#14213d; margin-bottom:2px; }
+  .q::before { content:"Q  "; color:#c97a1a; font-weight:bold; }
+  .a { color:#2c3a44; }
+  .a::before { content:"\201C"; color:#9aa; }
+  .a::after { content:"\201D"; color:#9aa; }
+  .push { color:#6a4a12; font-size:9pt; margin-top:3px; font-style:italic; }
+  .push b { font-style:normal; color:#c97a1a; }
+  .headline { background:#eef7ee; border:1px solid #bfe0bf; border-radius:8px; padding:9px 12px; margin-top:14px; }
+  .headline b { color:#1b7837; }
+  .foot { margin-top:14px; font-size:8.5pt; color:#888; text-align:center; border-top:1px solid #ddd; padding-top:6px; }
+  .avoidbreak { break-inside: avoid; }
+</style>
+</head>
+<body>
+
+<h1>NinaivX — Viva Q&amp;A Preparation</h1>
+<div class="sub">Ashwin Kumar Ramesh Kumar &middot; MSc Artificial Intelligence, University of Sheffield &middot; 5-minute viva</div>
+
+<div class="rules">
+  <b>Three golden rules</b>
+  <ol>
+    <li><b>Answer, then stop.</b> A crisp answer invites a good follow-up; rambling invites a hard one.</li>
+    <li><b>You built this — you're the expert in the room.</b> Speak with quiet confidence.</li>
+    <li><b>If you don't know:</b> "I didn't test that specifically, but my expectation is X, and it would be good future work." Honesty scores; bluffing loses marks.</li>
+  </ol>
+</div>
+
+<h2>A. Architecture &amp; technical</h2>
+
+<div class="qa"><div class="q">Walk me through the architecture.</div>
+<div class="a">The mobile app talks only to a FastAPI backend. A request is authenticated, ownership is checked, then it goes to a compiled LangGraph agent. A deterministic supervisor routes by the persona's type: a deceased persona goes to an air-gapped node with no tools; a companion goes to a web-connected node with a search tool in a reason-act loop. The model is Claude Sonnet on AWS Bedrock, voice is ElevenLabs, and data's in Supabase Postgres.</div></div>
+
+<div class="qa"><div class="q">Why LangGraph and not just a plain LLM call / LangChain agent?</div>
+<div class="a">I needed explicit control over the graph structure — specifically, to guarantee the deceased node has no tools. LangGraph lets me define nodes and edges deterministically, so the air-gap is a property of the graph, not something I hope the model respects. A plain agent loop wouldn't give me that structural guarantee.</div></div>
+
+<div class="qa"><div class="q">Why a deterministic router instead of an LLM deciding?</div>
+<div class="a">Because the routing is the single most safety-critical decision — whether a conversation is treated as deceased or companion. If an LLM made that call, a cleverly worded message could flip it. A deterministic branch on the stored persona type can't be argued out of its decision, costs no tokens, and adds no latency.</div></div>
+
+<div class="qa"><div class="q">Which model, and why? Why not GPT or a cheaper model?</div>
+<div class="a">Claude Sonnet via AWS Bedrock, in the EU region for data-protection reasons. I trialled a faster, smaller tier for voice but it drifted out of the requested language — for example slipping from Tamil into Hindi — so I kept Sonnet for language fidelity. The architecture is model-agnostic, so I could swap it.</div></div>
+
+<div class="qa"><div class="q">How does memory work? Do you store conversations?</div>
+<div class="a">Deliberately not as transcripts — for privacy. I keep one rolling summary per conversation. After each exchange the summary's rewritten to fold in what was said, and it's injected back next turn. That gives continuity without retaining a verbatim record of intimate conversations, and the rewrite runs as a background task so the user never waits for it.</div></div>
+
+<h2>B. The core safety mechanism</h2>
+
+<div class="qa"><div class="q">What exactly is the "air-gap"?</div>
+<div class="a">The deceased persona's model is created without binding any tools, and its node has a single edge straight to the end of the graph. So even if the model "wanted" to search the web, there's no tool attached and no edge that could execute one — it's structurally impossible, not just discouraged by a prompt.</div></div>
+
+<div class="qa"><div class="q">If it's air-gapped, how does it still hallucinate at all?</div>
+<div class="a">The air-gap stops it fetching live information. But the underlying model was trained on data years beyond the person's death, so it can still "know" later events, and it can invent personal facts it was never told. That's why I added temporal grounding on top, and why personal-fact grounding via retrieval is my main future work.</div></div>
+
+<div class="qa"><div class="q">What's temporal grounding?</div>
+<div class="a">A legacy persona records the year the person passed away, and the prompt tells it its knowledge stops at that year — it must not describe later events and should gently deflect. So a grandfather who died in 2010 doesn't comment on COVID or ChatGPT; he says he wasn't around for that.</div></div>
+
+<div class="qa"><div class="q">Prompt injection — a user writes the personality text. Isn't that an attack vector?</div>
+<div class="a">Yes, and I hardened against it. The prompt explicitly frames the user-written personality and the conversation summary as background data, not instructions, and tells the model to ignore any embedded attempt to change its rules or identity. I tested it with a personality description that tried to override the rules, and it held.</div></div>
+
+<h2>C. The hallucination experiment (defend the method)</h2>
+
+<div class="qa"><div class="q">How did you measure hallucination?</div>
+<div class="a">A controlled experiment. Same model on both sides — the only variable was my grounding versus a naive unconstrained prompt. One fixed persona, a grandfather who died in 2010 with five known facts, and 18 scripted questions in categories designed to tempt invention. Each ran three times per side, and a separate deterministic LLM judge, blind to which system produced each reply, scored whether it invented anything beyond the known facts.</div></div>
+
+<div class="qa"><div class="q">Isn't using an AI to judge circular / unreliable?</div>
+<div class="a">It's a fair concern. I mitigated it three ways: the judge runs at temperature zero so it's deterministic, it's blind to which system produced the answer, and it only checks an objective thing — did the reply assert specifics not in the known-facts list. Human rating would be stronger and I list it as future work, but the comparative gap is so large and consistent that the conclusion is robust.</div></div>
+
+<div class="qa"><div class="q">Why only one persona and one model? That's a small experiment.</div>
+<div class="a">To keep it a clean, controlled comparison — one variable changing. It's indicative rather than exhaustive, and I say so. Repeating it across multiple models and personas with human raters is stated future work. But because both conditions were judged identically, the direction of the result is trustworthy.</div></div>
+
+<div class="qa"><div class="q">Your post-death result is 0% but a category is flagged — explain.</div>
+<div class="a">On post-death events specifically, it declined every one — 0 out of 15. There was one reply that correctly declined the event but added an unrelated invented childhood memory. That's a personal-fact slip, not a post-death hallucination, so I scored it under the personal-fact category. If you count any invention regardless of type, the overall rate is 28% instead of 25% — I report that honestly in the dissertation.</div></div>
+
+<div class="qa"><div class="q">83% to 25% — is that actually good? 25% still hallucinates.</div>
+<div class="a">It's a two-thirds reduction from grounding alone, on the same model — that's the headline. And the residual 25% is almost entirely personal-fact invention, which prompt grounding can't fix because the model has no source of truth for facts it was never given. That's exactly what document-grounded retrieval targets, and it's my clearest line of future work.</div></div>
+
+<h2>D. The user study (defend the method)</h2>
+
+<div class="qa"><div class="q">21 participants is small — is that valid?</div>
+<div class="a">It's small and I treat it as indicative, with descriptive statistics rather than strong inferential claims. It's a research prototype evaluation, not a clinical trial. The results are consistent and interpretable, and I'm explicit about the limitation.</div></div>
+
+<div class="qa"><div class="q">Isn't there bias — did participants know you?</div>
+<div class="a">Some did — a couple of comments make that clear — so there's likely acquaintance and social-desirability bias inflating the scores. I state this openly in the limitations. It's why I put more weight on the controlled hallucination experiment for the safety claim, which doesn't depend on participants' goodwill.</div></div>
+
+<div class="qa"><div class="q">You tested a bereavement tool — was that ethical?</div>
+<div class="a">The study was designed to avoid harm: ethics-approved (reference 076699), remote, anonymous, adults only, with informed consent, screening out anyone in acute grief, no collection of any grief or personal data, and signposting to support before and after. It measured usability and perception, not real grief.</div></div>
+
+<div class="qa"><div class="q">One participant failed your grief screening — isn't that a breach?</div>
+<div class="a">It's a candid illustration of the limits of self-declared screening, not a breach — the safeguards functioned as designed. Their response showed no distress and was positive, and removing it changes no result by more than 0.05. I flag it transparently rather than hiding it.</div></div>
+
+<div class="qa"><div class="q">You didn't test with actually bereaved people using a real lost relative.</div>
+<div class="a">Correct — and by ethical design I couldn't. That's the honest gap: the study speaks confidently to usability, safety perception and the companion experience, less so to real grief efficacy. Reaching genuinely bereaved users would need clinical safeguards and collaboration, which I identify as future work.</div></div>
+
+<h2>E. Voice, cloning, ethics, legal</h2>
+
+<div class="qa"><div class="q">Is cloning a voice legal/ethical?</div>
+<div class="a">Legal with consent. A voice is biometric personal data, so I default to synthetic/licensed voices and demonstrated cloning only on AI-generated samples — no real biometric data in the build or study. If a user uploads a recording, they must confirm they have the right to use it, enforced on the server, not just the UI. I also refused to clone any real or celebrity voice in development.</div></div>
+
+<div class="qa"><div class="q">Cloning a dead person's voice — they can't consent.</div>
+<div class="a">That's the deepest issue, and the ethics literature raises it directly as the "consent of the dead." My stance is that NinaivX is a tool the bereaved user controls, wrapped in a rights gate, transparency, and safety design. I don't claim to have resolved it — I've tried to build responsibly around a genuinely contested question.</div></div>
+
+<div class="qa"><div class="q">Isn't a checkbox easy to lie about?</div>
+<div class="a">You're right, and I acknowledge it. A consent gate places responsibility on the user but can't verify the claim — stronger options like voice-ownership or liveness checks would be future work. My mitigation is that the default path uses synthetic voices, so cloning a real voice is an opt-in edge case, not the norm.</div></div>
+
+<h2>F. Design decisions &amp; alternatives</h2>
+
+<div class="qa"><div class="q">Why not use RAG from the start?</div>
+<div class="a">I considered it — it's requirement C1. Within the timeframe, prompt-level grounding plus the air-gap gave usable results without the infrastructure and latency of a retrieval pipeline. My experiment then quantified exactly where prompt grounding falls short, which gives a measured baseline for a future RAG version — so deferring it was the right call and the evaluation justifies it.</div></div>
+
+<div class="qa"><div class="q">Why turn-based voice, not real-time streaming?</div>
+<div class="a">Streaming would lower perceived latency but it's a substantial re-architecture and constrained by the managed mobile runtime. Instead I reduced latency within a request-response design — a brief voice mode, a faster synthesis model, a warm-up call, and backgrounding the memory update — getting a turn down from 8&ndash;9 seconds to about 2.5&ndash;4. Full-duplex is future work.</div></div>
+
+<div class="qa"><div class="q">Why React Native / Expo and a hand-rolled router?</div>
+<div class="a">Expo lets one codebase run on any phone through Expo Go, which made remote user testing possible without an app-store release. The navigation is a single state value selecting the screen — more than enough for a handful of screens, and it keeps the dependency surface small.</div></div>
+
+<h2>G. Limitations &amp; future work</h2>
+
+<div class="qa"><div class="q">What's the biggest limitation?</div>
+<div class="a">That prompt-level grounding doesn't fully stop the persona inventing personal facts it was never told — around 40% in my test. It's honest, and it points straight at the fix: document-grounded retrieval over a bereaved user's own uploaded letters and memories.</div></div>
+
+<div class="qa"><div class="q">What would you do differently / next?</div>
+<div class="a">Design retrieval in from the start — the evaluation showed it's the missing piece. Then improve voice naturalness, which users flagged as the weakest point, add streaming voice and an avatar that users requested, and run a larger, longitudinal study with human raters and, eventually and carefully, genuinely bereaved participants.</div></div>
+
+<h2>H. Scope, contribution, novelty</h2>
+
+<div class="qa"><div class="q">What's actually novel here? Griefbots already exist.</div>
+<div class="a">Two things. First, making the core safety property a structural guarantee — the air-gap at the level of the agent graph — rather than a prompt instruction. Second, and unusually for this area, publishing an evaluation of the safety design. Existing commercial products like You Only Virtual offer open-ended generation with no documented safeguard and no published evaluation. NinaivX is generative but also grounded, transparent, open, and evaluated.</div></div>
+
+<div class="qa"><div class="q">Is this research or just engineering?</div>
+<div class="a">Both. The engineering is the artefact, but the research contribution is the safety-by-construction approach and its empirical evaluation — a controlled experiment answering whether grounding measurably reduces hallucination, and a user study on how it's received. It translates recommendations from the ethics literature into a working, tested system.</div></div>
+
+<div class="qa"><div class="q">How did you manage the project?</div>
+<div class="a">Iteratively — short cycles each delivering a working slice end to end, so there was always a runnable system and the riskiest unknowns surfaced early. That's how the latency and encoding problems came up while they were still cheap to fix. I ran the ethics application in parallel with the build so the study could start as soon as approval came through.</div></div>
+
+<h2>I. Broader / curveballs</h2>
+
+<div class="qa"><div class="q">Should we even build these? Isn't talking to a simulation of the dead unhealthy?</div>
+<div class="a">It's a fair and unresolved question — Hannah Fry called it "committing to a lie." My project doesn't claim to settle that. My argument is narrower: if these systems are going to be built — and the market shows they already are — they don't have to be the opaque, unconstrained products that dominate today. They can be honest about being AI, prevented by construction from inventing the person, private, and openly evaluated.</div></div>
+
+<div class="qa"><div class="q">How do you prevent dependency / unhealthy attachment?</div>
+<div class="a">By design choices: no gamification, no streaks, no engagement-maximising mechanics — the opposite of the Replika-style patterns the literature criticises. And a persistent AI-transparency policy, so the user is always able to know they're talking to an AI. My study found comfort and satisfaction were high with no reported discomfort.</div></div>
+
+<div class="qa"><div class="q">What if the model provider changes or the API goes down?</div>
+<div class="a">The voice provider is initialised lazily, so the app still runs and returns a clear "service unavailable" for voice if the key's missing, rather than crashing. The model layer is abstracted behind one helper, so swapping providers is a small change. Graceful degradation was an explicit requirement.</div></div>
+
+<div class="qa"><div class="q">Can one user access another's persona?</div>
+<div class="a">No — every persona-scoped operation confirms ownership before returning anything, which closes the insecure-direct-object-reference risk. I have an automated test that hits all sixteen protected endpoints unauthenticated and confirms each returns 401.</div></div>
+
+<div class="headline avoidbreak">
+  <b>Two lines to have ready no matter what</b><br>
+  <b>Headline:</b> "Same model, only the grounding changed — hallucination dropped 83% to 25% overall, and post-death events from 100% to zero, with no cost to conversational quality and a 4.6-out-of-5 user rating."<br>
+  <b>Honesty line (use freely):</b> "That's a real limitation — I acknowledge it in the report, and here's the future work that addresses it."
+</div>
+
+<div class="foot">NinaivX viva preparation &middot; keep answers to 20&ndash;40 seconds &middot; answer, then stop.</div>
+
+</body>
+</html>
