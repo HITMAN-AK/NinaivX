@@ -39,7 +39,10 @@
         {
           "microphonePermission": "Allow NinaivX to use the microphone so you can talk with your personas."
         }
-      ]
+      ],
+      "expo-sharing",
+      "expo-status-bar",
+      "expo-asset"
     ],
     "owner": "hitman-ak",
     "runtimeVersion": {
