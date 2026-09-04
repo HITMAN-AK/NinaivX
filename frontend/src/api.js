@@ -1,6 +1,9 @@
 // NinaivX API client — auto-detects the dev machine's LAN IP so a physical
 // iPhone running Expo Go can reach the FastAPI backend over WiFi.
 import Constants from 'expo-constants';
+// Native, reliable multipart file upload (fetch+FormData file uploads are flaky
+// under React Native's new architecture in SDK 57, so we use uploadAsync instead).
+import * as FileSystem from 'expo-file-system/legacy';
 
 // Resolve the backend base URL.
 // 1) PRODUCTION: an explicit URL (set EXPO_PUBLIC_API_URL, or app.json > expo.extra.apiUrl)
@@ -88,6 +91,35 @@ async function fetchWithRefresh(url, init = {}, isAuthed = false) {
     }
   }
   return res;
+}
+
+// Reliable multipart file upload via expo-file-system (not fetch+FormData).
+// Refreshes the token once on a 401 and retries. Returns { status, body }.
+async function uploadFileWithRefresh(path, fileUri, { token, fieldName = 'file', parameters = {}, mimeType } = {}) {
+  const doUpload = (authToken) =>
+    FileSystem.uploadAsync(`${API_BASE}${path}`, fileUri, {
+      httpMethod: 'POST',
+      uploadType: FileSystem.FileSystemUploadType.MULTIPART,
+      fieldName,
+      ...(mimeType ? { mimeType } : {}),
+      parameters,
+      headers: authToken ? { Authorization: `Bearer ${authToken}` } : {},
+    });
+
+  let res;
+  try {
+    res = await doUpload(token);
+  } catch (e) {
+    throw new Error(`Cannot reach the server at ${API_BASE}. Is the backend running?`);
+  }
+  if (res.status === 401 && token && _refreshToken) {
+    const newToken = await tryRefresh();
+    if (newToken) {
+      try { res = await doUpload(newToken); }
+      catch (e) { throw new Error(`Cannot reach the server at ${API_BASE}.`); }
+    }
+  }
+  return res; // { status, body, headers }
 }
 
 async function request(path, { method = 'GET', body, token, isForm } = {}) {
@@ -180,15 +212,12 @@ export const api = {
 
   // --- Speech-to-text only: audio -> { transcript } (for review before sending) ---
   stt: async (token, audioUri, languageCode) => {
-    const form = new FormData();
-    form.append('file', { uri: audioUri, name: 'input.m4a', type: 'audio/m4a' });
-    if (languageCode) form.append('language_code', languageCode);
-    const res = await fetchWithRefresh(`${API_BASE}/api/stt`, {
-      method: 'POST', headers: { Authorization: `Bearer ${token}` }, body: form,
-    }, !!token);
-    const text = await res.text();
-    let data = {}; try { data = JSON.parse(text); } catch {}
-    if (!res.ok) throw new Error(data.detail || `Transcription failed (${res.status})`);
+    const res = await uploadFileWithRefresh('/api/stt', audioUri, {
+      token, fieldName: 'file', mimeType: 'audio/m4a',
+      parameters: languageCode ? { language_code: languageCode } : {},
+    });
+    let data = {}; try { data = JSON.parse(res.body); } catch {}
+    if (res.status < 200 || res.status >= 300) throw new Error(data.detail || `Transcription failed (${res.status})`);
     return data.transcript || '';
   },
 
@@ -199,40 +228,26 @@ export const api = {
 
   // --- Voice: send a recording, receive { transcript, reply, base64 } ---
   voiceChat: async (token, persona_id, audioUri) => {
-    const form = new FormData();
-    form.append('persona_id', persona_id);
-    form.append('file', { uri: audioUri, name: 'input.m4a', type: 'audio/m4a' });
-
-    const res = await fetchWithRefresh(`${API_BASE}/api/voice-chat`, {
-      method: 'POST', headers: { Authorization: `Bearer ${token}` }, body: form,
-    }, !!token);
-    const text = await res.text();
-    let data = {}; try { data = JSON.parse(text); } catch {}
-    if (!res.ok) throw new Error(data.detail || `Voice chat failed (${res.status})`);
+    const res = await uploadFileWithRefresh('/api/voice-chat', audioUri, {
+      token, fieldName: 'file', mimeType: 'audio/m4a',
+      parameters: { persona_id: String(persona_id) },
+    });
+    let data = {}; try { data = JSON.parse(res.body); } catch {}
+    if (res.status < 200 || res.status >= 300) throw new Error(data.detail || `Voice chat failed (${res.status})`);
     return { transcript: data.transcript || '', reply: data.reply || '', base64: data.audio_base64 || null };
   },
 
   // --- Clone a voice from an uploaded audio file, linked to a persona ---
   // `file` = { uri, name, type } from the document picker.
   cloneVoice: async (token, name, description, file, persona_id) => {
-    const form = new FormData();
-    form.append('name', name);
-    form.append('description', description);
-    form.append('file', {
-      uri: file.uri,
-      name: file.name || 'sample.mp3',
-      type: file.type || 'audio/mpeg',
-    });
-    if (persona_id) form.append('persona_id', persona_id);
     // Consent is gated in the UI; confirm it to the server too (enforced server-side).
-    form.append('rights_confirmed', 'true');
-
-    const res = await fetchWithRefresh(`${API_BASE}/api/clone-voice`, {
-      method: 'POST', headers: { Authorization: `Bearer ${token}` }, body: form,
-    }, !!token);
-    const text = await res.text();
-    let data = {}; try { data = JSON.parse(text); } catch {}
-    if (!res.ok) throw new Error(data.detail || `Voice cloning failed (${res.status})`);
+    const parameters = { name, description, rights_confirmed: 'true' };
+    if (persona_id) parameters.persona_id = String(persona_id);
+    const res = await uploadFileWithRefresh('/api/clone-voice', file.uri, {
+      token, fieldName: 'file', mimeType: file.type || 'audio/mpeg', parameters,
+    });
+    let data = {}; try { data = JSON.parse(res.body); } catch {}
+    if (res.status < 200 || res.status >= 300) throw new Error(data.detail || `Voice cloning failed (${res.status})`);
     return data;
   },
 };
